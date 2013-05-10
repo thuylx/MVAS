@@ -1,0 +1,150 @@
+<html>
+<head>
+<title>Nhập kết quả xổ số</title>
+
+<style type="text/css">
+
+body {
+ background-color: #fff;
+ margin: 40px;
+ font-family: Lucida Grande, Verdana, Sans-serif;
+ font-size: 14px;
+ color: #4F5155;
+}
+
+a {
+ color: #003399;
+ background-color: transparent;
+ font-weight: normal;
+}
+
+h1 {
+ color: #FF0000;
+ background-color: transparent;
+ border-bottom: 1px solid #D0D0D0;
+ font-size: 16px;
+ font-weight: bold;
+ margin: 24px 0 2px 0;
+ padding: 5px 0 6px 0;
+}
+
+code {
+ font-family: Monaco, Verdana, Sans-serif;
+ font-size: 12px;
+ background-color: #f9f9f9;
+ border: 1px solid #D0D0D0;
+ color: #002166;
+ display: block;
+ margin: 14px 0 14px 0;
+ padding: 12px 10px 12px 10px;
+}
+
+</style>
+</head>
+<body>
+
+<h1>Nhập kết quả xổ số MIỀN BẮC</h1>
+ 
+<p>Đây là tool dùng để nhập kết quả xổ số miền bắc, phải kiểm tra số liệu thật kỹ tránh sai sót.</p>
+
+<code>Nhập kết quả XSMB các giải lần lượt từng giải một.<br />
+Các giải đã nhập sẽ được tự động load vào form.<br />
+Các trường Mã tỉnh và Ngày tháng được load tự động.</code>
+<form action="<?php echo $form_processing_url;?>" method="post" name="injection_form">
+<table border="0" align="left">
+<fieldset>
+<input type="hidden" name="msisdn" value="injector"/>
+<input type="hidden" name="short_code" value="7927"/>
+<input type="hidden" name="smsc_id" value="GSM-Modem"/>
+<input type="hidden" name="time" value="<?php echo $time;?>"/>
+<input type="hidden" name="content" value=""/>
+<tr valign="middle">
+	<td valign="middle" align="right">Mã tỉnh:</td>
+	<td align="left"><input type="text" name="lottery_code" value="<?php echo $lottery_code;?>" size="3" readonly="true"/></td>
+</tr>
+<tr valign="middle">
+	<td valign="middle" align="right">Ngày tháng:</td>
+	<td align="left"><input type="text" name="lottery_date" value="<?php echo $lottery_date;?>" size="5" readonly="true" /></td>
+</tr>
+<?php foreach ($prizes as $prize):?>
+<tr valign="middle">
+	<td valign="middle" align="right">Giải <?php echo $prize['title'];?>:</td>
+	<td align="left">
+    <?php for($i=1;$i<=$prize['count'];$i++):
+        if($i!=1): echo "-"; endif;?><input type="text" name="<?php echo $prize['title']."_".$i;?>" id="<?php echo $prize['title']."_".$i;?>" size="<?php echo $prize['length']?>" maxlength="<?php echo $prize['length']?>" value="<?php if (isset($result[$prize['title']][$i-1])): echo $result[$prize['title']][$i-1]; endif;?>" /><?php endfor;?></td>
+</tr>
+<?php endforeach;?>
+<tr>
+	<td colspan="2">
+    <div align="center">
+    <p>
+    <strong>!!!Đề nghị kiểm tra kỹ số liệu trước khi bấm nút Nhập!!!</strong> <br />
+    <input type="submit" value="Nhập" onclick="javascript: return CheckSure();"/></p></div></td>
+</tr>
+
+</fieldset>
+</table>
+
+</form>
+
+<script language="javascript">
+function isCorrect($str)
+{
+    var $re = new RegExp("^[0-9]+$");
+    return $str.match($re);
+}
+function CheckSure(){
+    var $prizes = new Array('DB','1','2','3','4','5','6','7');
+    var $counts = new Array(1,1,2,6,4,6,3,4);
+    var $value;
+    var $temp;    
+    $value = document.injection_form.lottery_code.value+" "+document.injection_form.lottery_date.value;
+    for (var $i=0;$i<$prizes.length;$i++)
+    {
+        $prize = $prizes[$i];
+        $count = $counts[$i];   
+        $temp = new Array;   
+        $check = false;
+        $error = -1;  
+        for (var $j=1;$j<=$count;$j++)
+        {
+            $field = document.getElementById($prize+"_"+$j);
+            if ($field.value != "")
+            {                
+                $check = true;
+            }
+            if (isCorrect($field.value) && ($field.value.length == $field.maxLength))
+            {
+                $temp[$j-1] = $field.value;                
+            }             
+            else
+            {
+                $error = $j;
+            }
+        }
+        if ($check && ($error>-1))
+        {
+            alert("Lỗi giải "+$prize+", ô số "+$error);
+            $field = document.getElementById($prize+"_"+$error);            
+            $field.select();
+            return false;
+        }
+        $temp = $temp.join("-");
+        if ($temp != "")
+        {
+            $value += "\n"+$prize+":"+$temp;            
+        }                
+    }
+    
+    if( window.confirm("Đề nghị kiểm tra dữ liệu thật cẩn thận trước khi nhập.\nNội dung tin vừa nhập:\n\n"+$value+"\n\nBạn đã kiểm tra nội dung, đảm bảo chính xác?")){
+        document.injection_form.content.value = $value;
+        return true;
+    }else{
+        return false
+    }
+}
+</script>
+
+<p><br /></p>
+</body>
+</html>

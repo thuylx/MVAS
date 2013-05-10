@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Neu la XML phai chuan hoa:
+"   &quot;
+'   &apos;
+<   &lt;
+>   &gt;
+&   &amp;
+-->
+<Sample>
+    <!--See below for example of input field in xml format-->
+    
+    
+<!-- Xu ly queue -->
+<queue>
+    <active_record>
+        <where_in>
+            <field>short_code</field>
+            <value>7127</value>
+            <value>7227</value>
+            <value>7327</value>
+            <value>7427</value>
+            <value>7527</value>
+            <value>7627</value>
+            <value>7727</value>
+        </where_in>
+        <where>
+            <field>date(from_unixtime(`time`))</field>
+            <value>{time.Y}-{time.d}-{time.h}</value>
+            <escape>0</escape>
+        </where>
+    </active_record>
+    <service>
+        <keyword>XSTT</keyword>
+        <keyword>VIP</keyword>
+        <keyword>MM</keyword>
+        <keyword>SC</keyword>
+        <keyword>TK</keyword>
+    </service>
+</queue>
+
+<!--Mo ta function-->
+<function>
+    <name>test</name>
+    <params>
+        <para1>parameter 1</para1>
+        <para2>parameter 2</para2>
+    </params>    
+</function>
+
+<!--Send SMS/Wappush
+Cac tham so khac: smsc_id, sender, msisdn, udh or link(Wappush only)-->
+<message>
+    <content>{mo.short_code} LUCKY
+So MM: {mm}
+
+SIEU DEP: {prediction.0}-{prediction.1}-{prediction.2}
+
+10 ngay chua ve: {stat}
+
+Ban se nhan dc XSTT {time.d}/{time.m}</content>
+
+    <ads>        
+        <ad1>*VIP->7727: nhan ngay 2 so cuc VIP!</ad1>
+        <ad2>*MM->7727: nhan ngay 3 so MM!</ad2>
+        <ad3>*SC->7627: SC loto VO DICH!</ad3>
+        <ad4>*TK->7627: t.ke DAC BIET!</ad4>
+    </ads>    
+</message>
+
+<!--Update MO-->
+<MO>
+    <balance>7</balance>
+    <status>Executed</status>
+</MO>
+
+<!--Set einvironment-->
+<evr>
+    <balance>
+        <Viettel>
+            <b7027>1</b7027>
+            <b7127>2</b7127>
+            <b7227>3</b7227>
+            <b7327>4</b7327>
+            <b7427>5</b7427>
+            <b7527>6</b7527>
+            <b7627>8</b7627>
+            <b7727>11</b7727>
+        </Viettel>
+        <VMS>
+            <b7027>1</b7027>
+            <b7127>2</b7127>
+            <b7227>4</b7227>
+            <b7327>6</b7327>
+            <b7427>8</b7427>
+            <b7527>12</b7527>
+            <b7627>20</b7627>
+            <b7727>34</b7727>
+        </VMS>        
+        <Vinaphone>
+            <b7027>1</b7027>
+            <b7127>2</b7127>
+            <b7227>4</b7227>
+            <b7327>6</b7327>
+            <b7427>8</b7427>
+            <b7527>12</b7527>
+            <b7627>20</b7627>
+            <b7727>34</b7727>
+        </Vinaphone>     
+        <Vietnamobile>
+            <b7027>1</b7027>
+            <b7127>2</b7127>
+            <b7227>4</b7227>
+            <b7327>6</b7327>
+            <b7427>8</b7427>
+            <b7527>12</b7527>
+            <b7627>20</b7627>
+            <b7727>34</b7727>
+        </Vietnamobile>    
+        <Beeline>
+            <b7027>1</b7027>
+            <b7127>2</b7127>
+            <b7227>4</b7227>
+            <b7327>6</b7327>
+            <b7427>8</b7427>
+            <b7527>12</b7527>
+            <b7627>20</b7627>
+            <b7727>34</b7727>
+        </Beeline>            
+        <GSM-Modem>
+            <b7027>1</b7027>
+            <b7127>2</b7127>
+            <b7227>4</b7227>
+            <b7327>6</b7327>
+            <b7427>8</b7427>
+            <b7527>12</b7527>
+            <b7627>20</b7627>
+            <b7727>34</b7727>
+        </GSM-Modem>
+        <GSM-Modem-2>
+            <b7027>1</b7027>
+            <b7127>2</b7127>
+            <b7227>4</b7227>
+            <b7327>6</b7327>
+            <b7427>8</b7427>
+            <b7527>12</b7527>
+            <b7627>20</b7627>
+            <b7727>34</b7727>
+        </GSM-Modem-2>                    
+    </balance>
+</evr>
+
+<!--Loop definition-->
+<loop>
+    <array>array</array>
+    <!--setting for loop with array or object (foreach)-->
+    <key>key</key> <!--default-->
+    <value>value</value> <!--default-->
+    <!--setting for loop with a counter-->
+    <counter>counter</counter>
+    <from>0</from> <!--default-->
+    <to>4</to> <!--required-->
+    <step>1</step> <!--default-->
+</loop>
+
+</Sample>

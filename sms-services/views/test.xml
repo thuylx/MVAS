@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<replies>
+    <reply>
+	<mo_id>1234</mo_id>
+        <msisdn>+84983666888</msisdn>
+        <content>Ban da gui nhac chuong cho so dien thoai 0989198198 thanh cong! Cam on ban da su dung dich vu</content>
+        <type>1</type>
+    </reply>
+    <reply>
+        <mo_id>1234</mo_id>
+	<msisdn>84989198198</msisdn>
+        <content>Ban nhan duoc nhac chuong tu so dien thoai 0983666888. DT ho tro: 19001234</content>
+        <type>1</type>
+    </reply>
+    <reply>
+        <mo_id>1234</mo_id>
+	<msisdn>84989198198</msisdn>
+        <content>Tai ve nhac chuong Cau vong khuyet</content>
+        <type>2</type>
+        <link>http://doitac.com/abc/xyz</charge>
+    </reply>
+</replies>

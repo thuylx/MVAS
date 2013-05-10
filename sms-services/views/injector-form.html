@@ -1,0 +1,86 @@
+<html>
+<head>
+<title>SMS Injection Form</title>
+
+<style type="text/css">
+
+body {
+ background-color: #fff;
+ margin: 40px;
+ font-family: Lucida Grande, Verdana, Sans-serif;
+ font-size: 14px;
+ color: #4F5155;
+}
+
+a {
+ color: #003399;
+ background-color: transparent;
+ font-weight: normal;
+}
+
+h1 {
+ color: #444;
+ background-color: transparent;
+ border-bottom: 1px solid #D0D0D0;
+ font-size: 16px;
+ font-weight: bold;
+ margin: 24px 0 2px 0;
+ padding: 5px 0 6px 0;
+}
+
+code {
+ font-family: Monaco, Verdana, Sans-serif;
+ font-size: 12px;
+ background-color: #f9f9f9;
+ border: 1px solid #D0D0D0;
+ color: #002166;
+ display: block;
+ margin: 14px 0 14px 0;
+ padding: 12px 10px 12px 10px;
+}
+
+</style>
+</head>
+<body>
+
+<h1>SMS Injector</h1>
+ 
+<p>Use this tool to inject sms into the system for testing purpose.</p>
+
+<code>Enter msisdn, short code, smsc ID, sent time and content of the sms you would like to inject in below form and then click "inject" button.</code>
+<form action="<?php echo $form_processing_url;?>" method="post" name="injection_form">
+<table border="0" align="left">
+<fieldset>
+<tr valign="middle">
+	<td height="40" valign="middle">MSISDN:</td>
+	<td valign="middle"><input type="text" name="msisdn" value="+84996660003" size="50" /></td>
+</tr>
+<tr valign="middle">
+	<td valign="middle">Short code:</td>
+	<td><input type="text" name="short_code" value="7927" size="50" /></td>
+</tr>
+<tr valign="middle">
+	<td valign="middle">SMSC:</td>
+	<td><input type="text" name="smsc_id" value="GSM-Modem" size="50" /></td>
+</tr>
+<tr valign="middle">
+	<td valign="middle">Send time:</td>
+	<td><input type="text" name="time" value="<?php echo $time;?>" size="50" /></td>
+</tr>
+<tr valign="middle">
+	<td valign="middle">Content:</td>
+	<td><textarea rows="10" cols="40" name="content"  onfocus="if (document.injection_form.content.value=='Enter MO content to inject to test environment.') {document.injection_form.content.value=''};" onblur="if (document.injection_form.content.value==''){document.injection_form.content.value='Enter MO content to inject to test environment.'};">Enter MO content to inject to test environment.</textarea></td>
+</tr>
+<tr>
+	<td colspan="2">
+    <div align="center"><input type="submit" value="Inject"/></div></td>
+</tr>
+
+</fieldset>
+</table>
+
+</form>
+
+<p><br /></p>
+</body>
+</html>

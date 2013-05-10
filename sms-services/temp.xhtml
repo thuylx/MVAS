@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<function>
+    <name>Vnnplus_get</name>
+    <params>
+        <msg>
+            <type>{types.{mo.keyword}}</type>
+            <code>{mo.args.code}</code>
+            <request_id>{mo.id}</request_id>
+            <user_id>{mo.msisdn}</user_id>
+            <service_id>{mo.short_code}</service_id>
+            <cmd>{mo.keyword}</cmd>
+        </msg>
+    </params>
+</function>
+
+<evr>
+    <mo_list type="function">
+        <name>get_mo_list</name>
+    </mo_list>
+</evr>
+
+<message>
+    <content>{lottery.result}</content>
+    <msisdn>{value}</msisdn>    
+    <smsc_id>GSM-Modem</smsc_id>
+</message>
+
+
+<queue>
+    <active_record>
+        <where_in>
+            <field>short_code</field>
+            <value>7327</value>
+            <value>7427</value>
+            <value>7527</value>
+            <value>7627</value>
+            <value>7727</value>
+        </where_in>
+        <where>
+            <field>balance</field>
+            <value>0</value>
+        </where>
+    </active_record>
+    <service>
+        <keyword>XS</keyword>
+        <keyword>KQ</keyword>
+        <keyword>LOTO</keyword>
+    </service>
+</queue>
+
+<loop>
+    <array>mo_list</array>
+</loop>

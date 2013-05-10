@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+(c) MVAS 2012-05-23 Send MT message to subcribers Online WSDL SOAP generator 0.1a Julien Blitte
+-->
+<definitions xmlns:tns="partner.send_sms.mvas.wsdl" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsd1="partner.send_sms.mvas.xsd" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns="http://schemas.xmlsoap.org/wsdl/" name="Send MT message to subcribers" targetNamespace="partner.send_sms.mvas.wsdl">
+<!-- definition of datatypes -->
+<types>
+<schema xmlns="http://www.w3.org/2000/10/XMLSchema" targetNamespace="partner.send_sms.mvas.xsd">
+<element name="username">
+<complexType>
+<all>
+<element name="value" type="string"/>
+</all>
+</complexType>
+</element>
+<element name="password">
+<complexType>
+<all>
+<element name="value" type="string"/>
+</all>
+</complexType>
+</element>
+<element name="mo_id">
+<complexType>
+<all>
+<element name="value" type="int"/>
+</all>
+</complexType>
+</element>
+<element name="short_code">
+<complexType>
+<all>
+<element name="value" type="string"/>
+</all>
+</complexType>
+</element>
+<element name="msisdn">
+<complexType>
+<all>
+<element name="value" type="string"/>
+</all>
+</complexType>
+</element>
+<element name="content">
+<complexType>
+<all>
+<element name="value" type="string"/>
+</all>
+</complexType>
+</element>
+<element name="type">
+<complexType>
+<all>
+<element name="value" type="int"/>
+</all>
+</complexType>
+</element>
+<element name="link">
+<complexType>
+<all>
+<element name="value" type="string"/>
+</all>
+</complexType>
+</element>
+<element name="resultcode">
+<complexType>
+<all>
+<element name="value" type="string"/>
+</all>
+</complexType>
+</element>
+</schema>
+</types>
+<!-- response messages -->
+<message name="returns_resultcode">
+<part name="resultcode" type="xsd:resultcode"/>
+</message>
+<!-- request messages -->
+<message name="send_sms">
+<part name="username" type="xsd:username"/>
+<part name="password" type="xsd:password"/>
+<part name="mo_id" type="xsd:mo_id"/>
+<part name="short_code" type="xsd:short_code"/>
+<part name="msisdn" type="xsd:msisdn"/>
+<part name="content" type="xsd:content"/>
+<part name="type" type="xsd:type"/>
+<part name="link" type="xsd:link"/>
+</message>
+<!-- server's services -->
+<portType name="Send SMS">
+<operation name="send_sms">
+<input message="tns:send_sms"/>
+<output message="tns:returns_resultcode"/>
+</operation>
+</portType>
+<!-- server encoding -->
+<binding name="Send SMS_webservices" type="tns:Send SMS">
+<soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+<operation name="send_sms">
+<soap:operation soapAction="urn:xmethods-delayed-quotes#send_sms"/>
+<input>
+<soap:body use="encoded" namespace="urn:xmethods-delayed-quotes" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+</input>
+<output>
+<soap:body use="encoded" namespace="urn:xmethods-delayed-quotes" encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"/>
+</output>
+</operation>
+</binding>
+<!-- access to service provider -->
+<service name="Partner service">
+<port name="Partner service_0" binding="Send SMS_webservices">
+<soap:address location="https://ws.mvas.vn:7227/production/sms-services/webservice/index"/>
+</port>
+</service>
+</definitions>
