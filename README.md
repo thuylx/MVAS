@@ -1,4 +1,0 @@
-MVAS
-====
-
-SMS services
