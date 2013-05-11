@@ -1,7 +1,7 @@
 Options +FollowSymLinks
 <IfModule mod_rewrite.c>
 RewriteEngine On
-RewriteBase /development_v3/cms/
+RewriteBase /development/cms/
 
 <Files .*>
 Order Deny,Allow
