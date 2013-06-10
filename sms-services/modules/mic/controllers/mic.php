@@ -32,10 +32,11 @@ class MIC extends MY_Controller
             $coi = explode(' ',$coi);
             $coi[1] = isset($coi[1])?$coi[1]:NULL;
             
-            $this->MO->args[] = array(
-                'secret_number' => $coi[0],
-                'oid'           => $coi[1]
-            );
+            $temp = array();
+            $temp['secret_number'] = $coi[0];
+            array_shift($coi);
+            $temp['oid'] = implode(' ',$coi);
+            $this->MO->args[] = $temp;
         }
     }        
 
