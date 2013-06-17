@@ -37,7 +37,6 @@ class MIC extends MY_Controller
             array_shift($coi);
             $temp['oid'] = implode(' ',$coi);
             $this->MO->args[] = $temp;
-            $coi = $temp;
         }
     }        
 
