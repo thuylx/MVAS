@@ -90,7 +90,7 @@ class XSMN extends MY_Controller
             }
             else
             {
-                $this->MO->balance += 1;
+                $this->MO->balance = $this->MO->balance + 1;
                 $pending = TRUE; 
             }            
         }        
@@ -142,7 +142,7 @@ class XSMN extends MY_Controller
             }
             else
             {
-                $this->MO->balance += 1;
+                $this->MO->balance = $this->MO->balance + 1;
                 $pending = TRUE;
             }            
         }        
@@ -249,13 +249,13 @@ class XSMN extends MY_Controller
             {
                 $last_date = date('Y-m-d',strtotime("+$i day"));
                 $codes = $this->Lottery_model->get_open_lotteries($this->region,$last_date);                
-                $this->MO->balance += count($codes);            
+                $this->MO->balance = $this->MO->balance + count($codes);            
             }             
         }
                                 
         if ($this->MO->short_code == '7427' || ($this->MO->short_code == '7327' && $mt_count < $this->max_mt_num()))
         {
-            $this->MO->balance += 1; //Cho tin hello
+            $this->MO->balance = $this->MO->balance + 1; //Cho tin hello
         }                                
     }
     

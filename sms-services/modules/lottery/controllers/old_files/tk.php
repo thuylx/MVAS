@@ -243,30 +243,30 @@ class TK extends MY_Controller {
     protected function sc_7127()
     {
         $this->sc_7027();
-        $this->MO->balance += $this->number_of_mt[$this->MO->short_code] - 1;
+        $this->MO->balance = $this->MO->balance + $this->number_of_mt[$this->MO->short_code] - 1;
     }
     
     protected function sc_7227()
     {
         $this->sc_7027();
-        $this->MO->balance += $this->number_of_mt[$this->MO->short_code] - 1;
+        $this->MO->balance = $this->MO->balance + $this->number_of_mt[$this->MO->short_code] - 1;
     }            
     
     protected function sc_7327()
     {
         $this->sc_7027();
-        $this->MO->balance += $this->number_of_mt[$this->MO->short_code] - 1;
+        $this->MO->balance = $this->MO->balance + $this->number_of_mt[$this->MO->short_code] - 1;
     }        
     
     protected function sc_7427()
     {
         $this->sc_7027();
-        $this->MO->balance += $this->number_of_mt[$this->MO->short_code] - 1;
+        $this->MO->balance = $this->MO->balance + $this->number_of_mt[$this->MO->short_code] - 1;
     }            
     
     protected function sc_default()
     {             
-        $this->MO->balance += $this->number_of_mt[$this->MO->short_code];
+        $this->MO->balance = $this->MO->balance + $this->number_of_mt[$this->MO->short_code];
         
         $this->reply('stat_00');
         $this->MO->balance -= 1;

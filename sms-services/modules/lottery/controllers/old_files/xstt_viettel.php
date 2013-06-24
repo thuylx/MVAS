@@ -330,7 +330,7 @@ class Xstt_viettel extends MY_Controller {
         
         if ($result->code == 'DB' && $this->MO->short_code >= '7627')
         {            
-            //$this->MO->balance += 1; //hello
+            //$this->MO->balance = $this->MO->balance + 1; //hello
             
             //Tra tin loto
             $loto = $this->Lottery_model->get_today_loto($this->lottery_code);

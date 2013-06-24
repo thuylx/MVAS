@@ -539,7 +539,7 @@ class XSDP_viettel extends MY_Controller {
     protected function sc_7627()
     {
         $this->sc_7527();
-        //$this->MO->balance += $this->number_of_mt[$this->MO->short_code] - $this->number_of_mt['7527'];
+        //$this->MO->balance = $this->MO->balance + $this->number_of_mt[$this->MO->short_code] - $this->number_of_mt['7527'];
 
         //******************************************************************************
         //Gui tin thong ke
@@ -579,7 +579,7 @@ class XSDP_viettel extends MY_Controller {
     protected function sc_default()
     {
         $this->sc_7527();
-        //$this->MO->balance += $this->number_of_mt[$this->MO->short_code] - $this->number_of_mt['7527'];
+        //$this->MO->balance = $this->MO->balance + $this->number_of_mt[$this->MO->short_code] - $this->number_of_mt['7527'];
 
         //******************************************************************************
         //Gui tin thong ke

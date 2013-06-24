@@ -417,7 +417,7 @@ class MY_Controller extends MX_Controller
                 }                    
                 else
                 {
-                    $this->MO->balance += $action['input'];
+                    $this->MO->balance = $this->MO->balance + $action['input'];
                     $result = TRUE;
                 }                    
                 break;

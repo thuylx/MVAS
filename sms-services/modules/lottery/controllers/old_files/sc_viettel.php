@@ -213,7 +213,7 @@ class SC_viettel extends MY_Controller
     protected function sc_7327()
     {
         $this->sc_7227();
-        $this->MO->balance += $this->number_of_mt[$this->MO->short_code] - $this->number_of_mt['7227'];
+        $this->MO->balance = $this->MO->balance + $this->number_of_mt[$this->MO->short_code] - $this->number_of_mt['7227'];
     }
     
     protected function sc_7427()
