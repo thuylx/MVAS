@@ -145,8 +145,20 @@ class Scp
                 $controller = $hooks['pre_execution']['controller'];
                 $method = (isset($hooks['pre_execution']['method']))?$hooks['pre_execution']['method']:"pre_execution";                                
                 write_log('debug',"Hook pre_execution enabled, run $this->module/$controller/$method");
-                $CI->load->module($this->module.'/'.$controller);
-                $CI->$controller->$method();
+                try
+                {
+                    $CI->load->module($this->module.'/'.$controller);
+                    if (method_exists($CI->$controller, $method))
+                    {
+                        $CI->$controller->$method();
+                    }
+                    else 
+                    {
+                        write_log('error',"pre_execution hook error: method <b>$controller->$method</b> does not exist");
+                    }
+                } catch (Exception $e) {
+                    write_log('error','pre_execution hook error: '.$e->getMessage());
+                }
             }
             /*
             if (isset($hooks['pre_run']))
@@ -170,9 +182,21 @@ class Scp
         write_log("debug","<p><strong>Run $this->module/$this->controller/$this->method, service = $this->service, trigger = $this->trigger</strong>",'core');        
         $controller = $this->controller;
         $method = $this->method;        
-        $CI->load->module($this->module.'/'.$controller);        
-        $CI->$controller->$method();        
-
+        try
+        {
+            $CI->load->module($this->module.'/'.$controller);        
+            if (method_exists($CI->$controller, $method))
+            {
+                $CI->$controller->$method();
+            }
+            else 
+            {
+                write_log('error',"SCP error: method <b>$controller->$method</b> does not exist");
+            }                        
+        } catch (Exception $e) {
+            write_log('error','SCP main function error: '.$e->getMessage());
+        }                
+        
         //-----------------------------------------------------------------------------------------------
         // Try to run post_execution and post_run hooks if enabled
         //----------------------------------------------------------------------------------------------- 
@@ -183,8 +207,20 @@ class Scp
                 $controller = $hooks['post_execution']['controller'];
                 $method = (isset($hooks['post_execution']['method']))?$hooks['post_execution']['method']:"post_execution";
                 write_log('debug',"Hook post_execution enabled, run $this->module/$controller/$method");
-                $CI->load->module($this->module.'/'.$controller);
-                $CI->$controller->$method();
+                try
+                {
+                    $CI->load->module($this->module.'/'.$controller);
+                    if (method_exists($CI->$controller, $method))
+                    {
+                        $CI->$controller->$method();
+                    }
+                    else 
+                    {
+                        write_log('error',"post_execution hook error: method <b>$controller->$method</b> does not exist");
+                    }                    
+                } catch (Exception $e) {
+                    write_log('error','post_execution hook error: '.$e->getMessage());
+                }                
             }
             
             /*
