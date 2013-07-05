@@ -105,7 +105,7 @@ class Service extends MX_Controller
         
         //Insert MO into database        
         $this->MO_model->insert($this->ORI_MO);                
-                
+        
         //Black list and White list processing             
         if ($this->_process_black_white_list($this->scp->category,$this->ORI_MO->msisdn))
         {

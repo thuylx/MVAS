@@ -784,7 +784,8 @@ class MY_Controller extends MX_Controller
                 try 
                 {
                     $evr = $func['name'];
-                    $this->Evr->$evr = @$this->soap_client->__soapCall((string)$func['name'],(array)$func['params']);                                        
+                    $this->Evr->$evr = @$this->soap_client->__soapCall((string)$func['name'],(array)$func['params']);
+                    write_log('debug',"$evr response: ".(is_array($this->Evr->$evr) || is_object($this->Evr->$evr))?print_r($this->Evr->$evr,TRUE):$this->Evr->$evr);
                     $result = TRUE;
                 }
                 catch (SoapFault $E)

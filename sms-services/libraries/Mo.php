@@ -225,7 +225,7 @@ class Mo
         $pos = strpos($mo_content," ");
         if ($pos === FALSE) //No argument
         {            
-            $this->keyword = strtoupper($mo_content);            
+            $this->keyword = strtoupper($mo_content);                               
         }
         else
         {
