@@ -20,11 +20,10 @@ class MY_Controller extends MX_Controller
         write_log('debug',"Constructing ".get_class($this),'core');        
         parent::__construct();        
         $this->MO = new Mo();
-//        $this->MT->mo_id = 0; //NULL in database mean from external application
-        
+     
         set_time_limit($this->config->item('time_limit'));                
         $this->load->model('service_actions_model');
-        $this->load->helper('xml');
+        $this->load->helper('xml');                
     }
             
     /**

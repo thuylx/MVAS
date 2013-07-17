@@ -21,5 +21,5 @@ $config['log_debug_items']['mo']        = TRUE;
 $config['log_debug_items']['mt']        = TRUE;
 $config['log_debug_items']['service']   = TRUE;
 $config['log_debug_items']['maintenance']   = TRUE;
-$config['log_threshold'] = 4;
+//$config['log_threshold'] = 4;
 /* End of file config/development.php*/
