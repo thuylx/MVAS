@@ -198,7 +198,6 @@ class MY_Controller extends MX_Controller
         $extension = $matches[5];
         if ( ! property_exists($this->Evr, $var_name))
         {                           
-            //preg_match('/([0-9A-Za-z_]+)\((.*)\)/', $param[0],$matches);                                
             if ($is_func)
             {                                        
                 $params = explode(',', $params);
@@ -206,7 +205,12 @@ class MY_Controller extends MX_Controller
                 foreach ($params as $item)
                 {
                     $item = trim($item);
-                    if ($item=='NULL')
+                    if (substr($item, 0,1) == '$')
+                    {
+                        $item = substr($item, 1);
+                        $item = $this->Evr->$item;
+                    }
+                    elseif ($item=='NULL')
                     {
                         $item = NULL;
                     }
@@ -232,7 +236,7 @@ class MY_Controller extends MX_Controller
                 $params = explode('.', $extension); unset($params[0]);
             }            
             if (method_exists($this, $method))
-            {                                                
+            {            echo "\n$method()".print_r($params,TRUE);                                    
                 $temp = call_user_func_array(array($this,$method), $params);                            
             }
             elseif (function_exists($method))
@@ -746,7 +750,14 @@ class MY_Controller extends MX_Controller
                 }
                 try 
                 { 
-                    $this->soap_client = @new SoapClient($action['input']);
+                    if ($this->config->item('log_threshold') >=2 ) //debug mode
+                    {
+                        $this->soap_client = @new SoapClient($action['input'],array('trace' => 1));
+                    }
+                    else
+                    {
+                        $this->soap_client = @new SoapClient($action['input']);
+                    }                    
                     $result = TRUE;
                 } catch (SoapFault $E){            
                     write_log('error','SOAPClient Failed: '.$E->faultstring);
@@ -784,13 +795,24 @@ class MY_Controller extends MX_Controller
                 try 
                 {
                     $evr = $func['name'];
+                    write_log('debug',"Calling function ". $func['name'].". Parameter: ".  print_r($func['params'],TRUE));
                     $this->Evr->$evr = @$this->soap_client->__soapCall((string)$func['name'],(array)$func['params']);
-                    write_log('debug',"$evr response: ".(is_array($this->Evr->$evr) || is_object($this->Evr->$evr))?print_r($this->Evr->$evr,TRUE):$this->Evr->$evr);
-                    $result = TRUE;
+                    $log = (is_array($this->Evr->$evr) || is_object($this->Evr->$evr))?print_r($this->Evr->$evr,TRUE):$this->Evr->$evr;
+                    write_log('debug',"$evr response: ".$log);
+                    $result = TRUE;    
+                    
+                    //For debug purpose
+//                    echo $this->soap_client->__getLastRequest();
+//                    echo $this->soap_client->__getLastResponse();
                 }
                 catch (SoapFault $E)
                 {
-                    write_log('error','SOAP call failed: '.$E->faultstring);
+                    if ($this->config->item('log_threshold') >=2 ) //debug mode
+                    {
+                        write_log('debug','Request: '.htmlentities($this->soap_client->__getLastRequest()));
+                        write_log('debug','Return: '.htmlentities($this->soap_client->__getLastResponse()));
+                    }
+                    write_log('error','SOAP call failed: '.$E->faultstring);                    
                     $result = FALSE;
                     break;
                 }                
