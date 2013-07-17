@@ -236,7 +236,7 @@ class MY_Controller extends MX_Controller
                 $params = explode('.', $extension); unset($params[0]);
             }            
             if (method_exists($this, $method))
-            {            echo "\n$method()".print_r($params,TRUE);                                    
+            {                                    
                 $temp = call_user_func_array(array($this,$method), $params);                            
             }
             elseif (function_exists($method))
