@@ -809,8 +809,8 @@ class MY_Controller extends MX_Controller
                 {
                     if ($this->config->item('log_threshold') >=2 ) //debug mode
                     {
-                        write_log('debug','Request: '.htmlentities($this->soap_client->__getLastRequest()));
-                        write_log('debug','Return: '.htmlentities($this->soap_client->__getLastResponse()));
+                        write_log('debug','XML Request: '.$this->soap_client->__getLastRequest());
+                        write_log('debug','XML Return: '.$this->soap_client->__getLastResponse());
                     }
                     write_log('error','SOAP call failed: '.$E->faultstring);                    
                     $result = FALSE;

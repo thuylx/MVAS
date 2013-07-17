@@ -15,7 +15,11 @@ class Service extends MX_Controller
         }
         
         ini_set('memory_limit', '-1'); // Increase allowed memory size since the list might be huge
-                        
+        
+        //Load config
+        $this->load->config('core');
+        $this->load->config(ENVIRONMENT);
+        
         //Load libraries
         $this->load->library('Mo',NULL,'ORI_MO');
         $this->load->library('Mt',NULL,'MT');

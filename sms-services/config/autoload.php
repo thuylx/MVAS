@@ -80,7 +80,7 @@ $autoload['helper'] = array('log');
 |
 */
 
-$autoload['config'] = array(ENVIRONMENT,'core');
+$autoload['config'] = array();
 
 
 /*
