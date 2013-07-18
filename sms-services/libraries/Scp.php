@@ -113,7 +113,7 @@ class Scp
         $CI =& get_instance(); 
         $ori_service = $this->service; //for logging only        
         
-        write_log('error',highlight_info("[INFO] Start running service $ori_service using module ".strtoupper($this->module)." by trigger ".strtoupper($this->trigger)),'core');
+        write_log('debug',highlight_info("Start running service $ori_service using module ".strtoupper($this->module)." by trigger ".strtoupper($this->trigger)),'core');
                        
 //        //Parse $module
 //        if ($this->module)
@@ -237,7 +237,7 @@ class Scp
              * 
              */           
         }
-        write_log('error',highlight_info("[INFO] Finished running service $ori_service ($this->service) using module ".strtoupper($this->module)." by trigger ".strtoupper($this->trigger)),'core');
+        write_log('debug',highlight_info("Finished running service $ori_service ($this->service) using module ".strtoupper($this->module)." by trigger ".strtoupper($this->trigger)),'core');
     }
     
     public function process_mt_box()

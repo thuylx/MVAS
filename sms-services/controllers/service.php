@@ -138,8 +138,8 @@ class Service extends MX_Controller
             $this->Statistic_model->update();
         }           
                               
-        write_log("error",highlight_info("<strong>Total processed MO: ".$this->Statistic_model->total_processed_mo."</strong>"),'service');
-        write_log("error",highlight_info("<strong>Total sent MT: ".$this->Statistic_model->total_sent_mt."</strong>"),'service');            
+        write_log("debug",highlight_info("<strong>Total processed MO: ".$this->Statistic_model->total_processed_mo."</strong>"),'service');
+        write_log("debug",highlight_info("<strong>Total sent MT: ".$this->Statistic_model->total_sent_mt."</strong>"),'service');            
     }
     
     private function _process_black_white_list($service_category,$msisdn)

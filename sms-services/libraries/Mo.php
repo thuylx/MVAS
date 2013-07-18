@@ -74,6 +74,10 @@ class Mo
                 write_log('error','<strong><em>WARNING: Balance changed from '.(($this->is_set($key))?$this->$key:'NULL').' to a negative number ('.$value.').</em></strong>','mo');        
             }                          
         }
+        else
+        {
+            write_log('debug','Changed <strong>MO '.$key.'</strong> from '.(($this->is_set($key))?$this->$key:'NULL').' to <strong>'.$value.'</strong>','mo');
+        }
         
         $this->msg[ $key ] = $value;
     }     
