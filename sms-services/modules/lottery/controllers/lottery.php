@@ -110,7 +110,14 @@ class Lottery extends MY_Controller
         {
             $this->cache['last_today_result'] = $this->Lottery_model->get_last_today_result('MB');
         }        
-        return $this->cache['last_today_result'];
+        if ($this->cache['last_today_result'])
+        {
+            return $this->cache['last_today_result'];
+        }
+        else
+        {
+            return array('code'=>FALSE, 'content'=>'chua co', 'time' => 'chua co');
+        }
     }
     
     public function load_today_loto()
