@@ -214,9 +214,8 @@ class Service extends MX_Controller
             }
             else
             {                                
-                $this->scp->run_service();            
                 $this->ORI_MO->status = 'executed';
-                $this->ORI_MO->save();
+                $this->scp->run_service();                            
             }            
         }
         
@@ -246,7 +245,7 @@ class Service extends MX_Controller
                 'revenue'       =>$this->ORI_MO->price,
                 'last_mo_time'  => time()                
             );
-            if ($sent_msg) $cust['last_mt_time'] = $cust['last_mo_time'];               
+            if ($sent_msg) $cust['last_mt_time'] = $cust['last_mo_time'];   
             $this->Customer_model->insert($cust);
         }                          
     }    
@@ -341,7 +340,7 @@ class Service extends MX_Controller
         }             
         else
         {                     
-            write_log('debug',"<strong>Detected service = $this->scp->service</strong>",'service');  
+            write_log('debug',"<strong>Detected service = ".$this->scp->service."</strong>",'service');  
             write(highlight_info("<strong>Gui lai tin theo noi dung moi sua:\n</strong>")."keyword = ".highlight_content($this->ORI_MO->keyword)."\nargument = ".highlight_content($this->ORI_MO->argument));                  
             $this->ORI_MO->status = "re_run";                          
         }   
