@@ -49,7 +49,7 @@ class MIC extends MY_Controller
         
         foreach($this->MO->args as $coi)
         {            
-            write_log('error',"Loading COI ".$coi['secret_number']);
+            write_log('info',"Loading COI ".$coi['secret_number']);
             if ( ! $this->Coi_model->load_from_database($coi['secret_number'],array('secret_number','serial_number')))
             {                                
                 $this->Evr->not_found[] = $coi['secret_number'];
@@ -79,7 +79,7 @@ class MIC extends MY_Controller
                         $this->Coi_model->update();         
                         
                         $this->Evr->successfully[] = $this->Coi_model->serial_number;     
-                        write_log('error',"Active COI ".$this->Coi_model->serial_number." successfully");        
+                        write_log('info',"Active COI ".$this->Coi_model->serial_number." successfully");        
                     }
                     else
                     {
@@ -130,7 +130,7 @@ class MIC extends MY_Controller
                     $this->Coi_model->update();      
                     
                     $this->Evr->successfully[] = $this->Coi_model->serial_number;           
-                    write_log('error',"Cancel COI ".$this->Coi_model->serial_number." successfully");           
+                    write_log('info',"Cancel COI ".$this->Coi_model->serial_number." successfully");           
                 }
             }
         }        
@@ -170,7 +170,7 @@ class MIC extends MY_Controller
                     $this->Coi_model->update();      
                     
                     $this->Evr->successfully[] = $this->Coi_model->serial_number;          
-                    write_log('error',"Mark as lost COI ".$this->Coi_model->serial_number." successfully");            
+                    write_log('info',"Mark as lost COI ".$this->Coi_model->serial_number." successfully");            
                 }
             }
         }        

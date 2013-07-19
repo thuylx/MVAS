@@ -11,3 +11,10 @@ function xml_ampersand_escape($str)
     $str = preg_replace('/&[^; ]{0,6}.?/e', "((substr('\\0',-1) == ';') ? '\\0' : '&amp;'.substr('\\0',1))", $str);
     return $str;
 }
+
+function is_xml($string)
+{
+    $string = trim($string);
+    $string = substr($string,0,1);
+    return $string == '<';
+}

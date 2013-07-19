@@ -387,7 +387,7 @@ class MY_Controller extends MX_Controller
                 break;
             
             case 'send_sms':                    
-                @$sms = simplexml_load_string(xml_ampersand_escape($action['input']));                    
+                @$sms = (is_xml($action['input']))?simplexml_load_string(xml_ampersand_escape($action['input'])):FALSE;                    
                 if ($sms === FALSE)
                 {
                     $sms = new stdClass;
@@ -399,7 +399,7 @@ class MY_Controller extends MX_Controller
                 break;
                 
             case 'wap_push':
-                @$wap = simplexml_load_string(xml_ampersand_escape($action['input']));                    
+                @$wap = (is_xml($action['input']))?simplexml_load_string(xml_ampersand_escape($action['input'])):FALSE;
                 if ($wap === FALSE)
                 {
                     $wap = new stdClass;
@@ -426,7 +426,7 @@ class MY_Controller extends MX_Controller
                 break;
                 
             case 'update_mo':
-                @$sms = simplexml_load_string(xml_ampersand_escape($action['input']));                    
+                @$sms = (is_xml($action['input']))?simplexml_load_string(xml_ampersand_escape($action['input'])):FALSE;
                 if ($sms === FALSE)
                 {
                     write_log('error', 'Update MO failed');
@@ -472,7 +472,7 @@ class MY_Controller extends MX_Controller
                     break;
                 }
                 
-                @$func = simplexml_load_string(xml_ampersand_escape($action['input']));                                
+                @$func = (is_xml($action['input']))?simplexml_load_string(xml_ampersand_escape($action['input'])):FALSE;                                
                 if ($func === FALSE)
                 {
                     $func = $action['input'];
@@ -503,7 +503,7 @@ class MY_Controller extends MX_Controller
                 break;
                 
             case 'process_queue':       
-                @$input = simplexml_load_string(xml_ampersand_escape($action['input']));
+                @$input = (is_xml($action['input']))?simplexml_load_string(xml_ampersand_escape($action['input'])):FALSE;
                 if ($action['input'] != '' && $input === FALSE)
                 {
                     write_log('error', 'Invalid xml expression', 'core');
@@ -568,7 +568,7 @@ class MY_Controller extends MX_Controller
                 //Get input data
                 if ($action['input'] != '')
                 {
-                    @$loop = simplexml_load_string(xml_ampersand_escape($action['input']));
+                    @$loop = (is_xml($action['input']))?simplexml_load_string(xml_ampersand_escape($action['input'])):FALSE;
                     if ($loop === FALSE)
                     {                        
                         write_log('debug','No xml found, cheat input as an array name');
@@ -637,7 +637,7 @@ class MY_Controller extends MX_Controller
                 return 'end';     
                 
             case 'set_environment':
-                @$input = simplexml_load_string(xml_ampersand_escape($action['input']));
+                @$input = (is_xml($action['input']))?simplexml_load_string(xml_ampersand_escape($action['input'])):FALSE;
                 if ($input === FALSE)
                 { 
                     write_log('error', 'Set environemntal parameters failed');
@@ -700,7 +700,7 @@ class MY_Controller extends MX_Controller
                 break;
                 
             case 'auto_correct':
-                @$rule = simplexml_load_string(xml_ampersand_escape($action['input']));
+                @$rule = (is_xml($action['input']))?simplexml_load_string(xml_ampersand_escape($action['input'])):FALSE;
                 if ($rule !== FALSE)
                 {
                     $rule = $this->object_to_array($rule);
@@ -779,7 +779,7 @@ class MY_Controller extends MX_Controller
                     break;
                 }
                 
-                @$func = simplexml_load_string(xml_ampersand_escape($action['input']));                                
+                @$func = (is_xml($action['input']))?simplexml_load_string(xml_ampersand_escape($action['input'])):FALSE;                                
                 if ($func === FALSE)
                 {
                     $func = array();
@@ -954,10 +954,14 @@ class MY_Controller extends MX_Controller
      * */
     public function process_queue($root_service_action_id, $exclude_root_service_action = TRUE)
     {                   
+        //Backup original MO
+        $MO_backup = clone $this->MO;
+        
         while( ! ($this->MO_Queue->EOQ()))
         {            
             foreach($this->MO_Queue->get_queue() as $item)
             {                   
+                $this->MO->reset();
                 $this->MO->load($item);                
                 write_log('debug',"Processing MO id = ".$this->MO->id." from ".$this->MO->msisdn." to ".$this->MO->short_code,'core');
                 //===============================================================================
@@ -965,10 +969,13 @@ class MY_Controller extends MX_Controller
                 //===============================================================================	                                                           
                 $this->process_mo($this->MO,$root_service_action_id,$exclude_root_service_action);
             }
-        }
+        }                
         
         //Free mem
         $this->MO_Queue->reset();                
+        
+        //Recover original MO
+        $this->MO = clone $MO_backup;
     }
     
     

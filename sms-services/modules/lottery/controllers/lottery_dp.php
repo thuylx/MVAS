@@ -401,7 +401,7 @@ class Lottery_dp extends MY_Controller
         //*************************************************************************************
         if ( ! $this->Result_model->parse_result_string($this->MO->argument))
         {
-            write_log('error',"Parse lottery result string failed. MO id = ".$this->MO->id);
+            write_log('error',"Parse lottery result string failed.");
             $this->MO->status = 'failed';
             //$evr['updated'] = FALSE;
             //$this->Evr->lottery = $evr;

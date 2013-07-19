@@ -37,7 +37,7 @@ class Scp
         $svc = $CI->Service_model->get_service($service);
         if (! $svc)
         {
-            write_log('error',"<strong>Service $service not found, loading service failed.</strong> MO id = ".$CI->ORI_MO->id,'service');                
+            write_log('error',"<strong>Service $service not found, loading service failed.</strong>",'core');                
             return FALSE;                                              
         }
         else

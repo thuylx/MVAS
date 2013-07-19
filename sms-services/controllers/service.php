@@ -108,7 +108,9 @@ class Service extends MX_Controller
         }
         
         //Insert MO into database        
-        $this->MO_model->insert($this->ORI_MO);                
+        $this->MO_model->insert($this->ORI_MO);
+        
+        define('MOID', $this->ORI_MO->id);
         
         //Black list and White list processing             
         if ($this->_process_black_white_list($this->scp->category,$this->ORI_MO->msisdn))
@@ -119,11 +121,13 @@ class Service extends MX_Controller
         }
         else
         {
-            write_log('error','Black or White list has blocked MO message from '.$this->ORI_MO->msisdn.' to '.$this->ORI_MO->short_code.' via '.$this->ORI_MO->smsc_id.'. MO id = '.$this->ORI_MO->id);
+            write_log('error','Black or White list has blocked MO message from '.$this->ORI_MO->msisdn.' to '.$this->ORI_MO->short_code.' via '.$this->ORI_MO->smsc_id);
             $this->ORI_MO->status = 'error_black_white_list';
             $this->scp->load_service($this->config->item('error_handle_service'));            
             $this->_service_system();
-        }        
+        }
+        
+        echo "OK"; //Use to see if everything get well.
         
         if ($this->config->item('real_time_statistic'))
         {
@@ -209,9 +213,10 @@ class Service extends MX_Controller
                 $this->scp->run_service();                                                       
             }
             else
-            {
-                $this->ORI_MO->status = 'executed';                
+            {                                
                 $this->scp->run_service();            
+                $this->ORI_MO->status = 'executed';
+                $this->ORI_MO->save();
             }            
         }
         

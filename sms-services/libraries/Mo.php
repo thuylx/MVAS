@@ -74,7 +74,7 @@ class Mo
                 write_log('error','<strong><em>WARNING: Balance changed from '.(($this->is_set($key))?$this->$key:'NULL').' to a negative number ('.$value.').</em></strong>','mo');        
             }                          
         }
-        else
+        elseif (in_array($key,self::$savable_properties))
         {
             write_log('debug','Changed <strong>MO '.$key.'</strong> from '.(($this->is_set($key))?$this->$key:'NULL').' to <strong>'.$value.'</strong>','mo');
         }
@@ -301,10 +301,10 @@ class Mo
             $data = get_object_vars($data);
         }
         
-		foreach($data as $key=>$value)
-		{
-			$this->msg[$key] = $value;
-		}                
+        foreach($data as $key=>$value)
+        {
+                $this->msg[$key] = $value;
+        }                
     }    
     
     public function save()

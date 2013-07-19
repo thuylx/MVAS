@@ -83,14 +83,14 @@ function write_log($level = 'error', $message, $item = 'service')
         $message = "$time - $message";            
     }                   
     
-    if (isset($CI->ORI_MO))
-    {
-        $log = "[MVAS] [".$CI->ORI_MO->id."]".strip_tags($message); 
-    }
-    else
-    {
+//    if (isset($CI->ORI_MO))
+//    {
+//        $log = "[MVAS] [".$CI->ORI_MO->id."]".strip_tags($message); 
+//    }
+//    else
+//    {
         $log = "[MVAS] ".strip_tags($message); 
-    }
+//    }
     
     log_message($level, $log);                        
     if ($CI->config->item('log_print_out'))
