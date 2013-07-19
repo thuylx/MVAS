@@ -67,7 +67,7 @@ class Service extends MX_Controller
         write_log('debug','Checking if ORI_MO is duplicated somehow...');
         if ($this->MO_model->is_inserted($this->ORI_MO))
         {
-            write_log('error', 'Duplicate MO found, discarded!');
+            write_log('error', 'Duplicated MO found (SMSC: '.$this->ORI_MO->smsc_id.'), discarded!');
             return FALSE;
         }        
         
