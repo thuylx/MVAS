@@ -4,12 +4,14 @@ class Mt_model extends CI_Model
 {                    
     private $db_mgw;
     private $detected_smsc; //cache detected smsc for reuse
+    private $CI;
     
 	//constructor
 	public function __construct()
     {        
         write_log('debug',"MT Model constructing",'core');
         parent::__construct();
+        $this->CI =& get_instance();
     }    
     
     /**
@@ -159,13 +161,13 @@ class Mt_model extends CI_Model
         {
             write_log('debug',"Message sent before, cancelled",'core');
         }
-        elseif (in_array($MT->smsc_id,$this->config->item('disabled_smsc')))
+        elseif (in_array($MT->smsc_id,$this->CI->config->item('disabled_smsc')))
         {
             write_log('error',"Message sent via a disabled SMSC, cancelled",'core');
         }        
         else
         {                                   
-            $props = $this->config->item('MT');
+            $props = $this->CI->config->item('MT');
             $props['account']   = $MT->mo_id;
             $props['receiver']  = $MT->msisdn;
             $props['msgdata']   = $MT->content;
@@ -219,13 +221,13 @@ class Mt_model extends CI_Model
             {
                 write_log('debug',"Message sent before, cancelled",'core');
             }
-            elseif (in_array($MT->smsc_id,$this->config->item('disabled_smsc')))
+            elseif (in_array($MT->smsc_id,$this->CI->config->item('disabled_smsc')))
             {                
                 write_log('error',"Message sent via a disabled SMSC, cancelled",'core');                
             }
             else
             {                                   
-                $props = $this->config->item('MT');
+                $props = $this->CI->config->item('MT');
                 $props['account']   = $MT->mo_id;
                 $props['receiver']  = $MT->msisdn;
                 $props['msgdata']   = $MT->content;
@@ -233,7 +235,7 @@ class Mt_model extends CI_Model
                 $props['smsc_id']   = $MT->smsc_id;
                 $props['service']   = $MT->keyword;
                 $props['time']      = $MT->time;                
-                if (in_array($MT->smsc_id,$this->config->item('no_dlr_smsc')))
+                if (in_array($MT->smsc_id,$this->CI->config->item('no_dlr_smsc')))
                 {
                     $props['dlr_mask'] = 0;
                     $props['dlr_url'] = NULL;                    

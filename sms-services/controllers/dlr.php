@@ -6,8 +6,11 @@ class Dlr extends MX_Controller
 	{
         parent::__construct();      
                 
-        //For development;
-        $this->output->enable_profiler(ENVIRONMENT == 'development');
+            //For development;
+            $this->output->enable_profiler(ENVIRONMENT == 'development');
+            //Load config
+            $this->load->config('core');
+            $this->load->config(ENVIRONMENT);
 	}
 	
 	public function process($status, $status_time, $mt_id)
