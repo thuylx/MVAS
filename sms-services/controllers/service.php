@@ -341,7 +341,7 @@ class Service extends MX_Controller
         }             
         else
         {                     
-            write_log('debug',"<strong>Detected service = $svc->service</strong>",'service');  
+            write_log('debug',"<strong>Detected service = $this->scp->service</strong>",'service');  
             write(highlight_info("<strong>Gui lai tin theo noi dung moi sua:\n</strong>")."keyword = ".highlight_content($this->ORI_MO->keyword)."\nargument = ".highlight_content($this->ORI_MO->argument));                  
             $this->ORI_MO->status = "re_run";                          
         }   
