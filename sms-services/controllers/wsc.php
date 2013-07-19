@@ -33,13 +33,13 @@ class WSC extends MX_Controller
         if (isset($_GET['wsdl']))
         {
             $wsdl = new Zend_Soap_AutoDiscover();            
-            $wsdl->setUri('http://ws.mvas.vn:7227/'.ENVIRONMENT.'/sms-services/wsc/serve/'.$class);
+            $wsdl->setUri('http://ws.mvas.vn:7227/sms-services/wsc/serve/'.$class);
             $wsdl->setClass($class);
             $wsdl->handle();            
             return;
         }                        
         
-        $soap = new SoapServer('http://ws.mvas.vn:7227/'.ENVIRONMENT.'/sms-services/wsc/serve/'.$class.'?wsdl');
+        $soap = new SoapServer('http://ws.mvas.vn:7227/sms-services/wsc/serve/'.$class.'?wsdl');
         $soap->setClass($class);
         $soap->handle();        
     }          
