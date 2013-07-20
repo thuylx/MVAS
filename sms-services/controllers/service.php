@@ -307,6 +307,8 @@ class Service extends MX_Controller
      * */
     public function re_run($mo_id)
     {                
+        define('MOID', $mo_id); //for logging
+        
         //Configure to print out re-run result
         $this->config->set_item('log_print_out',TRUE);        
         
@@ -366,8 +368,11 @@ class Service extends MX_Controller
     }        
     
     public function timer()
-    {
+    {        
         $this->scp->trigger = 'timer';
+        
+        define('MOID', 'TIMER'); // For logging
+        
         if ($this->scp->load_service('timer'))
         {                        
             $this->scp->run_service();
