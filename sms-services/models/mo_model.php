@@ -101,7 +101,7 @@ class Mo_model extends CI_Model
             $MO->clear_changes();
             return $MO->id;
         }            
-        write_log("error","<strong>MO model cannot update MO object into database.SQL string:\n</strong>".$this->db->last_query(),'core');
+//        write_log("error","<strong>MO model cannot update MO object into database.SQL string:\n</strong>".$this->db->last_query(),'core');
         return FALSE;
     }
     

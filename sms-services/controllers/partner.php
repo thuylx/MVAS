@@ -13,10 +13,6 @@ class Partner extends MX_Controller
             write('<a href="http://appsrv.mvas.vn/'.ENVIRONMENT.'/index.php/injector" target="_parent">SMS Injection Form</a>');            
             write('<hr>');
         }
-        
-        //Load config
-        $this->load->config('core');
-        $this->load->config(ENVIRONMENT);        
                 
         //Load libraries
         $this->load->library('Mo',NULL,'MO');

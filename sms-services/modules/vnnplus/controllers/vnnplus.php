@@ -25,12 +25,19 @@ class Vnnplus extends MY_Controller
         
     public function process_result()
     {
-        $result = $this->Evr->Vnnplus_get->return;        
-        preg_match('|(.*):(http\:\/\/.*)|', $result,$matches);
-        return array(
-            'url' => $matches[2],
-            'title' => $matches[1]
-        );
+        $result = $this->Evr->Vnnplus_get->return;      
+        if (strlen($result)>1) // = 1 mean return is error code
+        {
+            preg_match('|(.*):(http\:\/\/.*)|', $result,$matches);
+            return array(
+                'url' => $matches[2],
+                'title' => $matches[1]
+            );
+        }
+        else
+        {
+            return FALSE;
+        }
     }           
 }
 

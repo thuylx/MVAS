@@ -149,7 +149,7 @@ class Lottery_model extends CI_Model
                  ->from('lottery_cache')
                  ->where('lottery_code',$lottery_code)
                  ->where_in('code',array('1','2','3','4','5','6','7','8','DB'))
-                 ->order_by('date(from_unixtime(`time`))','DESC')
+                 ->order_by('time','DESC')
                  ->order_by('code','DESC')
                  ->limit(1);
         $query = $this->db->get();
@@ -904,16 +904,29 @@ class Lottery_model extends CI_Model
     private function _get_loto_result_array($lottery_code = 'MB', $date = NULL)
     {
         $date = (is_null($date))?date('Y-m-d'):$date;
-        $this->db->select('loto')
-                 ->from('lottery_loto_result')
-                 ->where('lottery_code',$lottery_code)
-                 ->where('lottery_date',$date);
-                 
-        $query = $this->db->get();
-        $return = array();
-        foreach ($query->result() as $row)
+        
+        //Check if it was cached before
+        $return = $this->get_cache($lottery_code,"_get_loto_result_array($lottery_code,$date)");   
+        if ($return && date('Y-m-d',$return->time)==date('Y-m-d')) //Available and up-to-date
         {
-            $return[] = $row->loto;
+            $return = unserialize($return->content);
+        }
+        else        
+        {            
+            $this->db->select('loto')
+                     ->from('lottery_loto_result')
+                     ->where('lottery_code',$lottery_code)
+                     ->where('lottery_date',$date);
+
+            $query = $this->db->get();
+            $return = array();
+            foreach ($query->result() as $row)
+            {
+                $return[] = $row->loto;
+            }
+            
+            //Cache for later use
+            $this->cache($lottery_code,"_get_loto_result_array($lottery_code,$date)",serialize($return));             
         }
         
         return $return;
@@ -971,7 +984,7 @@ class Lottery_model extends CI_Model
         ksort($return);
         
         //Cache for later use
-        //$this->cache($lottery_code,"succession($days)",serialize($return));
+        $this->cache($lottery_code,"succession($days)",serialize($return));
         
         return $return;
     }    

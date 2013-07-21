@@ -35,32 +35,28 @@ class Maintenance extends MX_Controller
         switch ($table)
         {
             case 'mo':
-                $date = date('Y-m-01',strtotime("last month"));
-                if ($this->Dba->archive_mo($date))
-                {
-                    $this->Dba->purge_mo($date);
-                }
+                $date = date('Y-m-d',strtotime("1 month ago"));
+                $this->Dba->archive_mo($date);
+                $this->Dba->purge_mo($date);
                 break;
             case 'mt':
-                $date = date('Y-m-01',strtotime("last month"));
-                if ($this->Dba->archive_mt($date))
-                {
-                    $this->Dba->purge_mt($date);                    
-                }
+//                $date = date('Y-m-d',strtotime("1 month ago"));
+//                if ($this->Dba->archive_mt($date))
+//                {
+//                    $this->Dba->purge_mt($date);                    
+//                }
+                $this->Dba->archive_mt_without_mo();
+                $this->Dba->purge_mt_without_mo();
                 break;                
             case 'customer':
-                $date = date('Y-m-01',strtotime("3 months ago"));   
-                if ($this->Dba->archive_customer($date))
-                {
-                    $this->Dba->purge_customer($date);
-                }                
+                $date = date('Y-m-d',strtotime("3 months ago"));   
+                $this->Dba->archive_customer($date);
+                $this->Dba->purge_customer($date);
                 break;
             case 'kannel_sent_sms':
-                $date = date('Y-m-01',strtotime("last month"));
-                if ($this->Dba->archive_kannel_sent_sms($date))
-                {
-                    $this->Dba->purge_kannel_sent_sms($date);
-                }            
+                $date = date('Y-m-d',strtotime("last month"));
+                $this->Dba->archive_kannel_sent_sms($date);
+                $this->Dba->purge_kannel_sent_sms($date);
                 break;
         }
                 

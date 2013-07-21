@@ -330,9 +330,13 @@ class Mt_model extends CI_Model
             $this->db->where_in('msisdn',$msisdns);
         }
         
-        $from = (is_null($from))?date('Y-m-d 00:00:00'):$from;
-        $to = (is_null($to))?date('Y-m-d 23:59:59'):$to;
-        $this->db->where("FROM_UNIXTIME(".$this->db->protect_identifiers('mt',TRUE).".".$this->db->protect_identifiers('time').") BETWEEN ".$this->db->escape($from)." AND ".$this->db->escape($to));
+//        $from = (is_null($from))?date('Y-m-d 00:00:00'):$from;
+//        $to = (is_null($to))?date('Y-m-d 23:59:59'):$to;
+//        $this->db->where("FROM_UNIXTIME(".$this->db->protect_identifiers('mt',TRUE).".".$this->db->protect_identifiers('time').") BETWEEN ".$this->db->escape($from)." AND ".$this->db->escape($to));
+        
+        $from = strtotime((is_null($from))?date('Y-m-d 00:00:00'):$from);
+        $to = strtotime((is_null($to))?date('Y-m-d 23:59:59'):$to);
+        $this->db->where($this->db->protect_identifiers('time')." BETWEEN ".$this->db->escape($from)." AND ".$this->db->escape($to));
         
         $query = $this->db->get();
         

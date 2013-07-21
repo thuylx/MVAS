@@ -39,7 +39,9 @@ class Dba extends CI_Model
      * */
     public function purge_kannel_sent_sms($date)
     {        
-        $sql = "DELETE FROM `kannel`.`sent_sms` WHERE DATE(FROM_UNIXTIME(`time`)) < ".$this->db_mgw->escape($date).";";
+        $date = strtotime($date);
+//        $sql = "DELETE FROM `kannel`.`sent_sms` WHERE DATE(FROM_UNIXTIME(`time`)) < ".$this->db_mgw->escape($date).";";
+        $sql = "DELETE FROM `kannel`.`sent_sms` WHERE `time` < ".$this->db_mgw->escape($date).";";
         $this->db_mgw->query($sql);
         
         $affected_rows = $this->db_mgw->affected_rows();
@@ -61,7 +63,9 @@ class Dba extends CI_Model
      * */
     public function purge_mo($date)
     {
-        $sql = "DELETE FROM ".$this->db->protect_identifiers('mo',TRUE)." WHERE DATE(FROM_UNIXTIME(".$this->db->protect_identifiers('time').")) < ".$this->db->escape($date).";";
+//        $sql = "DELETE FROM ".$this->db->protect_identifiers('mo',TRUE)." WHERE DATE(FROM_UNIXTIME(".$this->db->protect_identifiers('time').")) < ".$this->db->escape($date).";";
+        $date = strtotime($date);
+        $sql = "DELETE FROM ".$this->db->protect_identifiers('mo',TRUE)." WHERE `time` < ".$this->db->escape($date).";";
         $this->db->query($sql);
         $affected_rows = $this->db->affected_rows();
         
@@ -85,9 +89,14 @@ class Dba extends CI_Model
         $table = $this->db->protect_identifiers('mt',TRUE);
         $table2 = $this->db->protect_identifiers('dlr',TRUE);
         
+        $date = strtotime($date);
+        
         //Purge dlr
+//        $sql = "DELETE FROM $table2".
+//               " WHERE `mt_id` IN (SELECT `id` FROM `mvas`.$table WHERE DATE(FROM_UNIXTIME(`mvas`.$table.`time`)) < ".$this->db->escape($date).");";
         $sql = "DELETE FROM $table2".
-               " WHERE `mt_id` IN (SELECT `id` FROM `mvas`.$table WHERE DATE(FROM_UNIXTIME(`mvas`.$table.`time`)) < ".$this->db->escape($date).");";
+               " WHERE `mt_id` IN (SELECT `id` FROM `mvas`.$table WHERE `mvas`.$table.`time` < ".$this->db->escape($date).");";
+        
         $this->db->query($sql);
         $affected_rows = $this->db->affected_rows();
         
@@ -100,7 +109,8 @@ class Dba extends CI_Model
         }    
         
         //Purge MT                
-        $sql = "DELETE FROM $table WHERE DATE(FROM_UNIXTIME(".$this->db->protect_identifiers('time').")) < ".$this->db->escape($date).";";
+//        $sql = "DELETE FROM $table WHERE DATE(FROM_UNIXTIME(".$this->db->protect_identifiers('time').")) < ".$this->db->escape($date).";";
+                $sql = "DELETE FROM $table WHERE `time` < ".$this->db->escape($date).";";
         $this->db->query($sql);
         $affected_rows = $this->db_mgw->affected_rows();
         
@@ -114,6 +124,42 @@ class Dba extends CI_Model
         
         return $affected_rows;
     }    
+    
+    public function purge_mt_without_mo()
+    {
+        $table = $this->db->protect_identifiers('mt',TRUE);
+        $table2 = $this->db->protect_identifiers('dlr',TRUE);
+        $table_mo = $this->db->protect_identifiers('mo',TRUE);
+        
+        //Purge MT                
+        $sql = "DELETE FROM $table WHERE mo_id NOT IN (SELECT id FROM $table_mo)";
+        $this->db->query($sql);
+        $affected_rows = $this->db_mgw->affected_rows();
+        
+        write_log('error',"Purged $affected_rows MT: ".$sql,'maintenance');
+        
+        if ($affected_rows)
+        {        
+            $sql = "OPTIMIZE TABLE $table";
+            $this->db->query($sql);                        
+        }
+        
+        //Purge dlr
+        $sql = "DELETE FROM $table2".
+               " WHERE `mt_id` NOT IN (SELECT `id` FROM `mvas`.$table)";
+        $this->db->query($sql);
+        $affected_rows = $this->db->affected_rows();
+        
+        write_log('error',"Purged $affected_rows DLR: ".$sql,'maintenance');
+        
+        if ($affected_rows)
+        {        
+            $sql = "OPTIMIZE TABLE $table2";
+            $this->db->query($sql);                        
+        }    
+        
+        return $affected_rows;        
+    }
     
     /**
      * Function to flush old MO from mvas database     
@@ -144,7 +190,7 @@ class Dba extends CI_Model
      * */    
     public function archive_kannel_sent_sms($date)
     {        
-        $sql =  "INSERT INTO `archive`.`kannel_sent_sms` ".
+        $sql =  "INSERT IGNORE INTO `archive`.`kannel_sent_sms` ".
                 "SELECT * FROM `kannel`.`sent_sms` WHERE `kannel`.`sent_sms`.`momt` IN ('MO','MT') AND DATE(FROM_UNIXTIME(`kannel`.`sent_sms`.`time`)) < ".$this->db->escape($date);
                 
         $this->db_mgw->query($sql);
@@ -163,7 +209,7 @@ class Dba extends CI_Model
     public function archive_mo($date)
     {
         $table = $this->db->protect_identifiers('mo',TRUE);
-        $sql =  "INSERT INTO `archive`.$table ".
+        $sql =  "INSERT IGNORE INTO `archive`.$table ".
                 "SELECT * FROM `mvas`.$table WHERE DATE(FROM_UNIXTIME(`mvas`.$table.`last_provision_time`)) < ".$this->db->escape($date);
                 
         $this->db->query($sql);
@@ -182,7 +228,7 @@ class Dba extends CI_Model
     public function archive_mt($date)
     {
         $table = $this->db->protect_identifiers('mt',TRUE);
-        $sql =  "INSERT INTO `archive`.$table ".
+        $sql =  "INSERT IGNORE INTO `archive`.$table ".
                 "SELECT * FROM `mvas`.$table WHERE DATE(FROM_UNIXTIME(`mvas`.$table.`time`)) < ".$this->db->escape($date);                        
         $this->db->query($sql);
         
@@ -193,7 +239,7 @@ class Dba extends CI_Model
         if ($success)
         {
             $table2 = $this->db->protect_identifiers('dlr',TRUE);
-            $sql =  "INSERT INTO `archive`.$table2 ".
+            $sql =  "INSERT IGNORE INTO `archive`.$table2 ".
                     "SELECT * FROM `mvas`.$table2 WHERE `mt_id` IN (SELECT `id` FROM `mvas`.$table WHERE DATE(FROM_UNIXTIME(`mvas`.$table.`time`)) < ".$this->db->escape($date).");";                        
             $this->db->query($sql);        
             
@@ -202,6 +248,30 @@ class Dba extends CI_Model
                         
         return $success;             
     }    
+    
+    public function archive_mt_without_mo()
+    {
+        $table = $this->db->protect_identifiers('mt',TRUE);
+        $sql =  "INSERT IGNORE INTO `archive`.$table ".
+                "SELECT * FROM `mvas`.$table WHERE mo_id NOT IN (SELECT id FROM m_mo)";                        
+        $this->db->query($sql);
+        
+        write_log('error','Archived '.$this->db->affected_rows().' MT: '.$sql,'maintenance');
+        
+        $success = $this->db->affected_rows();
+        
+//        if ($success)
+//        {
+//            $table2 = $this->db->protect_identifiers('dlr',TRUE);
+//            $sql =  "INSERT INTO `archive`.$table2 ".
+//                    "SELECT * FROM `mvas`.$table2 WHERE `mt_id` IN (SELECT `id` FROM `mvas`.$table WHERE DATE(FROM_UNIXTIME(`mvas`.$table.`time`)) < ".$this->db->escape($date).");";                        
+//            $this->db->query($sql);        
+//            
+//            write_log('error','Archived '.$this->db->affected_rows().' DLR: '.$sql,'maintenance');      
+//        }      
+                        
+        return $success;         
+    }
     
     /**
      * Function to archive database
@@ -212,7 +282,7 @@ class Dba extends CI_Model
     public function archive_customer($date)
     {
         $table = $this->db->protect_identifiers('customer',TRUE);
-        $sql =  "INSERT INTO `archive`.$table ".
+        $sql =  "INSERT IGNORE INTO `archive`.$table ".
                 "SELECT * FROM `mvas`.$table WHERE date(from_unixtime(`mvas`.$table.`last_mo_time`))< ".$this->db->escape($date)." ".
                 " AND date(from_unixtime(`mvas`.$table.`last_mt_time`))< ".$this->db->escape($date)." ".
                 "ON DUPLICATE KEY UPDATE  ".

@@ -57,7 +57,7 @@ class Mo
     
     public function __set($key,$value)
     {   
-        if (( ! $this->is_changed($key)) &&  ($this->$key !== $value)) 
+        if (( ! $this->is_changed($key)) &&  ($this->$key != $value)) 
         {             
             $this->changed_properties[] = $key;            
         }                

@@ -2,6 +2,10 @@
 
 class Mvas extends MY_Controller 
 {
+    public function __construct() {
+        parent::__construct();
+    }
+    
     public function load_data($param)            
     {
         switch ($param[0])
