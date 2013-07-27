@@ -36,7 +36,7 @@ class Mo_model extends CI_Model
      * @param   $MO: MO object
      * @return  Boolean: TRUE if exist, FALSE otherwise
      */
-    function is_inserted($MO)
+    function is_inserted(&$MO)
     {
         $this->db->select('id')
                  ->from('mo')
@@ -46,7 +46,9 @@ class Mo_model extends CI_Model
                  ->where('content',$MO->content);
         $query = $this->db->get();        
         if ($query->num_rows() == 0) return FALSE;
-        return TRUE;
+        
+        $row = $query->row();
+        return $row->id;
     }
     
     /**

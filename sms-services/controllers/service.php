@@ -65,9 +65,10 @@ class Service extends MX_Controller
         
         //Check if this MO exist already (caused by an error of Telco somehow)
         write_log('debug','Checking if ORI_MO is duplicated somehow...');
-        if ($this->MO_model->is_inserted($this->ORI_MO))
+        $inserted_id = $this->MO_model->is_inserted($this->ORI_MO);
+        if ($inserted_id !== FALSE)
         {
-            write_log('error', 'Duplicated MO found ('.$this->ORI_MO->msisdn.'), discarded!');
+            write_log('error', '[WARNING] Duplicated MO: '.$inserted_id.','.date('Y-m-d H:i:s',$this->ORI_MO->time).','.$this->ORI_MO->smsc_id.','.$this->ORI_MO->msisdn.','.$this->ORI_MO->short_code.','.$this->ORI_MO->content);
             return FALSE;
         }        
         

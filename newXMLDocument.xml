@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<function>
+    <name>MOReceive</name>
+    <params>
+            <mo_id>{mo.id}</mo_id>
+            <msisdn>{mo.msisdn}</msisdn>
+            <short_code>{mo.short_code}</short_code>
+            <maincode>{mo.keyword}</maincode>
+            <content>{mo.content}</content>
+            <smsc_id>{mo.smsc_id}</smsc_id>
+    </params>
+</function>
