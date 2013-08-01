@@ -5,7 +5,8 @@
 |--------------------------------------------------------------------------
 */
 $config['log_show_benchmark']   = FALSE;
-$config['log_show_class']       = FALSE;
+$config['log_show_class']       = FALSE; //Class in which function write_log be called
+$config['log_show_item']        = FALSE; //write_log($level,$message,$item)
 $config['log_print_out']        = FALSE;
 $config['log_print_log_level']  = FALSE;
 

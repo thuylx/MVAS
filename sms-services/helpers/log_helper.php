@@ -69,7 +69,7 @@ function write_log($level = 'error', $message, $item = 'service')
             $message = "[$temp] $message";
         }            
     }
-    else
+    elseif($CI->config->item('log_show_item'))
     {
         $item = strtoupper($item);
         $message = "[$item] $message";        
@@ -89,7 +89,7 @@ function write_log($level = 'error', $message, $item = 'service')
 //    }
 //    else
 //    {
-        $log = "[MVAS] ".strip_tags($message); 
+        $log = strip_tags($message); 
 //    }
     
     log_message($level, $log);                        
