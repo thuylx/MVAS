@@ -922,7 +922,7 @@ class MY_Controller extends MX_Controller
                                         'smsc_id'=>$this->MO->smsc_id,
                                         'short_code'=>$this->MO->short_code,
                                         'msisdn'=>$this->MO->msisdn,   
-                                        'template_id'=>NULL                               
+                                        'service_action_id'=>NULL                               
                                         ));
         
         //Preprocess MO

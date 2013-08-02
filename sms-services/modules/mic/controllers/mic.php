@@ -50,7 +50,7 @@ class MIC extends MY_Controller
         foreach($this->MO->args as $coi)
         {            
             write_log('info',"Loading COI ".$coi['secret_number']);
-            if ( ! $this->Coi_model->load_from_database($coi['secret_number'],array('secret_number','serial_number')))
+            if ( ! $this->Coi_model->load_from_database($coi['secret_number'],array('secret_number')))
             {                                
                 $this->Evr->not_found[] = $coi['secret_number'];
                 write_log('info',"COI ".$coi['secret_number']." not found!");
@@ -105,7 +105,7 @@ class MIC extends MY_Controller
     {
         foreach($this->MO->args as $coi)
         {
-            if ( ! $this->Coi_model->load_from_database($coi,array('secret_number','serial_number')))
+            if ( ! $this->Coi_model->load_from_database($coi,array('secret_number')))
             {
                 $this->Evr->not_found[] = $coi;
                 write_log('info',"COI ".$coi." not found!");
@@ -145,7 +145,7 @@ class MIC extends MY_Controller
     {
         foreach($this->MO->args as $coi)
         {
-            if ( ! $this->Coi_model->load_from_database($coi,array('secret_number','serial_number')))
+            if ( ! $this->Coi_model->load_from_database($coi,array('secret_number')))
             {
                 $this->Evr->not_found[] = $coi;
                 write_log('info',"COI ".$coi." not found!");
