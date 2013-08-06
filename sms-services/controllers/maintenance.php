@@ -30,6 +30,15 @@ class Maintenance extends MX_Controller
         $this->Dba->purge_lottery_cache($date);        
     }
     
+    function flush_kannel()
+    {
+        $date = date('Y-m-d',strtotime("1 month ago"));
+        $this->Dba->purge_kannel_sent_sms($date);  
+        
+        $date = date('Y-m-d');
+        $this->Dba->purge_dlr($date);         
+    }
+    
     function archive($table)
     {
         switch ($table)

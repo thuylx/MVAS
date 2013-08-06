@@ -38,6 +38,33 @@ class Lottery extends MY_Controller
         }                
     }   
     
+    public function preprocess_LOTO()
+    {
+        $this->MO->args = array('date'=>NULL);
+        $args = explode(' ',$this->MO->argument);
+        foreach($args as $arg)
+        {           
+            //Process for date argument if any in MO argument
+            //Only date argument accepted, discard another ones        
+            preg_match('/^([0-9]{1,2})[^0-9a-zA-Z]([0-9]{1,2})([^0-9a-zA-Z]([0-9]{1,4}))?$/',$arg,$matches);
+            if (count($matches) > 0)
+            {
+                $day = str_pad($matches[1],2,'0',STR_PAD_LEFT);
+                $month = str_pad($matches[2],2,'0',STR_PAD_LEFT);                
+                $year = date("Y");                    
+                $year = (isset($matches[4]))?str_pad($matches[4],4,$year,STR_PAD_LEFT):$year;                
+                
+                if (checkdate($month,$day,$year))
+                {        
+                    $this->MO->argument = "$year-$month-$day";
+                    $this->MO->args['date'] = "$year-$month-$day";                    
+                             
+                    write_log("info","Detected MO argurment = ".$this->MO->argument);                              
+                    break;
+                }        
+            }
+        }                
+    }     
     /*
     public function load_min_max($lottery_code,$date,$prize,$count)
     {
@@ -291,18 +318,20 @@ class Lottery extends MY_Controller
     
     public function load_full_result($date = NULL)
     {
-        if ($date) $date = date('Y-m-d');
+        if ( ! $date) $date = date('Y-m-d');
         $this->load->model('Result_model');
         $this->Result_model->load('MB',$date);            
         $result = $this->Result_model->generate_result_string();                 
+        return $result;
     }
     
     public function load_loto_result($date = NULL)
     {
-        if ($date) $date = date('Y-m-d');
+        if ( ! $date) $date = date('Y-m-d');
         $this->load->model('Result_model');
         $this->Result_model->load('MB',$date);            
-        $result = $this->Result_model->generate_loto_string();                 
+        $result = $this->Result_model->generate_loto_string();        
+        return $result;
     }    
     
     public function update_lottery_result()
