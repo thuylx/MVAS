@@ -213,7 +213,7 @@ class Dba extends CI_Model
         $date = strtotime($date);
         $table = $this->db->protect_identifiers('mo',TRUE);
         $sql =  "INSERT IGNORE INTO `archive`.$table ".
-                "SELECT * FROM `mvas`.$table WHERE  `mvas`.$table.`smsc_id` NOT IN ('GSM-Modem', 'GSM-Modem-2') AND `mvas`.$table.`last_provision_time` < ".$this->db->escape($date);
+                "SELECT * FROM `mvas`.$table WHERE  `mvas`.$table.`smsc_id` NOT IN ('GSM-Modem', 'GSM-Modem-2') AND `mvas`.$table.`time` < ".$this->db->escape($date);
                 
         $this->db->query($sql);
         
@@ -257,7 +257,7 @@ class Dba extends CI_Model
     {
         $table = $this->db->protect_identifiers('mt',TRUE);
         $sql =  "INSERT IGNORE INTO `archive`.$table ".
-                "SELECT * FROM `mvas`.$table WHERE mo_id NOT IN (SELECT id FROM m_mo)";                        
+                "SELECT * FROM `mvas`.$table WHERE mo_id NOT IN (SELECT id FROM m_mo) AND smsc_id NOT IN ('GSM-Modem','GSM-Modem-2')";                        
         $this->db->query($sql);
         
         write_log('error','Archived '.$this->db->affected_rows().' MT: '.$sql,'maintenance');
