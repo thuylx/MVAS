@@ -28,6 +28,7 @@ class Dba extends CI_Model
         {
             $sql = "OPTIMIZE TABLE `kannel`.`dlr`";
             $this->db_mgw->query($sql);
+            write_log('error',"Optimized table: ".$sql,'maintenance');
         }
         
         return $affected_rows;
@@ -52,6 +53,7 @@ class Dba extends CI_Model
         {
             $sql = "OPTIMIZE TABLE `kannel`.`sent_sms`";
             $this->db_mgw->query($sql);
+            write_log('error',"Optimized table: ".$sql,'maintenance');
         }
         
         return $affected_rows;
@@ -65,7 +67,7 @@ class Dba extends CI_Model
     {
 //        $sql = "DELETE FROM ".$this->db->protect_identifiers('mo',TRUE)." WHERE DATE(FROM_UNIXTIME(".$this->db->protect_identifiers('time').")) < ".$this->db->escape($date).";";
         $date = strtotime($date);
-        $sql = "DELETE FROM ".$this->db->protect_identifiers('mo',TRUE)." WHERE `time` < ".$this->db->escape($date).";";
+        $sql = "DELETE FROM ".$this->db->protect_identifiers('mo',TRUE)." WHERE `last_provision_time` < ".$this->db->escape($date).";";
         $this->db->query($sql);
         $affected_rows = $this->db->affected_rows();
         
@@ -74,7 +76,8 @@ class Dba extends CI_Model
         if ($affected_rows)
         {
             $sql = "OPTIMIZE TABLE ".$this->db->protect_identifiers('mo',TRUE);
-            $this->db->query($sql);            
+            $this->db->query($sql);  
+            write_log('error',"Optimized table: ".$sql,'maintenance');
         }
         
         return $affected_rows;
@@ -119,7 +122,8 @@ class Dba extends CI_Model
         if ($affected_rows)
         {        
             $sql = "OPTIMIZE TABLE $table";
-            $this->db->query($sql);                        
+            $this->db->query($sql);    
+            write_log('error',"Optimized table: ".$sql,'maintenance');
         }                                                
         
         return $affected_rows;
@@ -141,7 +145,8 @@ class Dba extends CI_Model
         if ($affected_rows)
         {        
             $sql = "OPTIMIZE TABLE $table";
-            $this->db->query($sql);                        
+            $this->db->query($sql);       
+            write_log('error',"Optimized table: ".$sql,'maintenance');
         }
         
 //        //Purge dlr
@@ -168,7 +173,10 @@ class Dba extends CI_Model
     public function purge_customer($date)
     {
         $date = strtotime($date);
-        $sql = "DELETE FROM ".$this->db->protect_identifiers('customer',TRUE)." WHERE ".$this->db->protect_identifiers('last_mo_time')." < ".$this->db->escape($date).";";
+        $table = $this->db->protect_identifiers('customer',TRUE);
+        $sql =  "DELETE FROM `mvas`.$table WHERE `mvas`.$table.`last_mo_time`< ".$this->db->escape($date)." ".
+                " AND `mvas`.$table.`last_mt_time`< ".$this->db->escape($date);
+//        $sql = "DELETE FROM ".$this->db->protect_identifiers('customer',TRUE)." WHERE ".$this->db->protect_identifiers('last_mo_time')." < ".$this->db->escape($date).";";
         $this->db->query($sql);
         $affected_rows = $this->db->affected_rows();
         
@@ -176,8 +184,9 @@ class Dba extends CI_Model
         
         if ($affected_rows)
         {        
-            $sql = "OPTIMIZE TABLE ".$this->db->protect_identifiers('customer',TRUE);
+            $sql = "OPTIMIZE TABLE ".$table;
             $this->db->query($sql);
+            write_log('error',"Optimized table: ".$sql,'maintenance');
         }          
         
         return $affected_rows;
@@ -213,7 +222,7 @@ class Dba extends CI_Model
         $date = strtotime($date);
         $table = $this->db->protect_identifiers('mo',TRUE);
         $sql =  "INSERT IGNORE INTO `archive`.$table ".
-                "SELECT * FROM `mvas`.$table WHERE  `mvas`.$table.`smsc_id` NOT IN ('GSM-Modem', 'GSM-Modem-2') AND `mvas`.$table.`time` < ".$this->db->escape($date);
+                "SELECT * FROM `mvas`.$table WHERE  `mvas`.$table.`smsc_id` NOT IN ('GSM-Modem', 'GSM-Modem-2') AND `mvas`.$table.`last_provision_time` < ".$this->db->escape($date);
                 
         $this->db->query($sql);
         
@@ -327,6 +336,7 @@ class Dba extends CI_Model
         {
             $sql = "OPTIMIZE TABLE ".$this->db->protect_identifiers('lottery_cache',TRUE);
             $this->db->query($sql);            
+            write_log('error',"Optimized table: ".$sql,'maintenance');
         }
         
         return $affected_rows;

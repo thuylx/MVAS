@@ -10,3 +10,8 @@
             <smsc_id>{mo.smsc_id}</smsc_id>
     </params>
 </function>
+
+<evr>
+    <count>0</count>
+</evr>
+    

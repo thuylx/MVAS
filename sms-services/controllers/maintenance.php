@@ -70,6 +70,23 @@ class Maintenance extends MX_Controller
         }
                 
     }
+    
+    public function process()
+    {
+//        # PURGE kannel database
+        $this->flush_kannel();
+
+//        # PURGE LOTTERY CACHE
+        $this->flush_lottery_cache();        
+
+//        # ARCHIVE KANNEL DATABSE
+        $this->archive('kannel_sent_sms');
+
+//        # ARCHIVE MVAS DATABSE
+        $this->archive('mo');
+        $this->archive('mt');
+        $this->archive('customer');
+    }
 }
 
 /* End of file Scheduler.php */
