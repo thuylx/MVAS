@@ -22,14 +22,15 @@ class Dba extends CI_Model
         
         $affected_rows = $this->db_mgw->affected_rows();
         
-        write_log('error',"Flushed $affected_rows dlr: ".$sql,'maintenance');
+        write_log('error',"WARNING: Purged $affected_rows kannel DLR",'maintenance');
+        write_log('debug',$sql,'maintenance');
         
-        if ($affected_rows)
-        {
-            $sql = "OPTIMIZE TABLE `kannel`.`dlr`";
-            $this->db_mgw->query($sql);
-            write_log('error',"Optimized table: ".$sql,'maintenance');
-        }
+//        if ($affected_rows)
+//        {
+//            $sql = "OPTIMIZE TABLE `kannel`.`dlr`";
+//            $this->db_mgw->query($sql);
+//            write_log('error',"Optimized table: ".$sql,'maintenance');
+//        }
         
         return $affected_rows;
     }    
@@ -47,14 +48,15 @@ class Dba extends CI_Model
         
         $affected_rows = $this->db_mgw->affected_rows();
         
-        write_log('error',"Flushed $affected_rows Kannel sent SMS: ".$sql,'maintenance');
+        write_log('error',"WARNING: Purged $affected_rows Kannel sent SMS.",'maintenance');
+        write_log('debug',$sql,'maintenance');
         
-        if ($affected_rows)
-        {
-            $sql = "OPTIMIZE TABLE `kannel`.`sent_sms`";
-            $this->db_mgw->query($sql);
-            write_log('error',"Optimized table: ".$sql,'maintenance');
-        }
+//        if ($affected_rows)
+//        {
+//            $sql = "OPTIMIZE TABLE `kannel`.`sent_sms`";
+//            $this->db_mgw->query($sql);
+//            write_log('error',"Optimized table: ".$sql,'maintenance');
+//        }
         
         return $affected_rows;
     }       
@@ -71,14 +73,15 @@ class Dba extends CI_Model
         $this->db->query($sql);
         $affected_rows = $this->db->affected_rows();
         
-        write_log('error',"Purged $affected_rows MO: ".$sql,'maintenance');
+        write_log('error',"WARNING: Purged $affected_rows MO",'maintenance');
+        write_log('debug',$sql,'maintenance');
         
-        if ($affected_rows)
-        {
-            $sql = "OPTIMIZE TABLE ".$this->db->protect_identifiers('mo',TRUE);
-            $this->db->query($sql);  
-            write_log('error',"Optimized table: ".$sql,'maintenance');
-        }
+//        if ($affected_rows)
+//        {
+//            $sql = "OPTIMIZE TABLE ".$this->db->protect_identifiers('mo',TRUE);
+//            $this->db->query($sql);  
+//            write_log('error',"Optimized table: ".$sql,'maintenance');
+//        }
         
         return $affected_rows;
     }
@@ -117,14 +120,14 @@ class Dba extends CI_Model
         $this->db->query($sql);
         $affected_rows = $this->db_mgw->affected_rows();
         
-        write_log('error',"Purged $affected_rows MT: ".$sql,'maintenance');
-        
-        if ($affected_rows)
-        {        
-            $sql = "OPTIMIZE TABLE $table";
-            $this->db->query($sql);    
-            write_log('error',"Optimized table: ".$sql,'maintenance');
-        }                                                
+        write_log('error',"WARNING: Purged $affected_rows MT",'maintenance');
+        write_log('debug',$sql,'maintenance');
+//        if ($affected_rows)
+//        {        
+//            $sql = "OPTIMIZE TABLE $table";
+//            $this->db->query($sql);    
+//            write_log('error',"Optimized table: ".$sql,'maintenance');
+//        }                                                
         
         return $affected_rows;
     }    
@@ -140,14 +143,15 @@ class Dba extends CI_Model
         $this->db->query($sql);
         $affected_rows = $this->db_mgw->affected_rows();
         
-        write_log('error',"Purged $affected_rows MT: ".$sql,'maintenance');
+        write_log('error',"WARNING: Purged $affected_rows MT",'maintenance');
+        write_log('debug',$sql,'maintenance');
         
-        if ($affected_rows)
-        {        
-            $sql = "OPTIMIZE TABLE $table";
-            $this->db->query($sql);       
-            write_log('error',"Optimized table: ".$sql,'maintenance');
-        }
+//        if ($affected_rows)
+//        {        
+//            $sql = "OPTIMIZE TABLE $table";
+//            $this->db->query($sql);       
+//            write_log('error',"Optimized table: ".$sql,'maintenance');
+//        }
         
 //        //Purge dlr
 //        $sql = "DELETE FROM $table2".
@@ -180,14 +184,15 @@ class Dba extends CI_Model
         $this->db->query($sql);
         $affected_rows = $this->db->affected_rows();
         
-        write_log('error',"Purged $affected_rows Customers: ".$sql,'maintenance');
+        write_log('error',"WARNING: Purged $affected_rows Customers",'maintenance');
+        write_log('debug',$sql,'maintenance');
         
-        if ($affected_rows)
-        {        
-            $sql = "OPTIMIZE TABLE ".$table;
-            $this->db->query($sql);
-            write_log('error',"Optimized table: ".$sql,'maintenance');
-        }          
+//        if ($affected_rows)
+//        {        
+//            $sql = "OPTIMIZE TABLE ".$table;
+//            $this->db->query($sql);
+//            write_log('error',"Optimized table: ".$sql,'maintenance');
+//        }          
         
         return $affected_rows;
     }       
@@ -226,7 +231,7 @@ class Dba extends CI_Model
                 
         $this->db->query($sql);
         
-        write_log('error','Archived '.$this->db->affected_rows().' MO: '.$sql,'maintenance');
+        write_log('debug','Archived '.$this->db->affected_rows().' MO: '.$sql,'maintenance');
         
         return $this->db->affected_rows();            
     }
@@ -245,7 +250,7 @@ class Dba extends CI_Model
                 "SELECT * FROM `mvas`.$table WHERE `mvas`.$table.`time` < ".$this->db->escape($date);                        
         $this->db->query($sql);
         
-        write_log('error','Archived '.$this->db->affected_rows().' MT: '.$sql,'maintenance');
+        write_log('debug','Archived '.$this->db->affected_rows().' MT: '.$sql,'maintenance');
         
         $success = $this->db->affected_rows();
         
@@ -256,7 +261,7 @@ class Dba extends CI_Model
                     "SELECT * FROM `mvas`.$table2 WHERE `mt_id` IN (SELECT `id` FROM `mvas`.$table WHERE `mvas`.$table.`time` < ".$this->db->escape($date).");";                        
             $this->db->query($sql);        
             
-            write_log('error','Archived '.$this->db->affected_rows().' DLR: '.$sql,'maintenance');      
+            write_log('debug','Archived '.$this->db->affected_rows().' DLR: '.$sql,'maintenance');      
         }      
                         
         return $success;             
@@ -269,7 +274,7 @@ class Dba extends CI_Model
                 "SELECT * FROM `mvas`.$table WHERE mo_id NOT IN (SELECT id FROM m_mo) AND smsc_id NOT IN ('GSM-Modem','GSM-Modem-2')";                        
         $this->db->query($sql);
         
-        write_log('error','Archived '.$this->db->affected_rows().' MT: '.$sql,'maintenance');
+        write_log('debug','Archived '.$this->db->affected_rows().' MT: '.$sql,'maintenance');
         
         $success = $this->db->affected_rows();
         
@@ -280,7 +285,7 @@ class Dba extends CI_Model
 //                    "SELECT * FROM `mvas`.$table2 WHERE `mt_id` IN (SELECT `id` FROM `mvas`.$table WHERE DATE(FROM_UNIXTIME(`mvas`.$table.`time`)) < ".$this->db->escape($date).");";                        
 //            $this->db->query($sql);        
 //            
-//            write_log('error','Archived '.$this->db->affected_rows().' DLR: '.$sql,'maintenance');      
+//            write_log('debug','Archived '.$this->db->affected_rows().' DLR: '.$sql,'maintenance');      
 //        }      
                         
         return $success;         
@@ -314,7 +319,7 @@ class Dba extends CI_Model
                 
         $this->db->query($sql);
         
-        write_log('error','Archived '.$this->db->affected_rows().' Customers: '.$sql,'maintenance');
+        write_log('debug','Archived '.$this->db->affected_rows().' Customers: '.$sql,'maintenance');
         
         return $this->db->affected_rows();
     }    
@@ -330,14 +335,15 @@ class Dba extends CI_Model
         $this->db->query($sql);
         $affected_rows = $this->db->affected_rows();
         
-        write_log('error',"Purged $affected_rows Lottery Cached Items: ".$sql,'maintenance');
+        write_log('error',"WARNING: Purged $affected_rows Lottery Cached Items",'maintenance');
+        write_log('debug', $sql, 'maintenance');
         
-        if ($affected_rows)
-        {
-            $sql = "OPTIMIZE TABLE ".$this->db->protect_identifiers('lottery_cache',TRUE);
-            $this->db->query($sql);            
-            write_log('error',"Optimized table: ".$sql,'maintenance');
-        }
+//        if ($affected_rows)
+//        {
+//            $sql = "OPTIMIZE TABLE ".$this->db->protect_identifiers('lottery_cache',TRUE);
+//            $this->db->query($sql);            
+//            write_log('error',"Optimized table: ".$sql,'maintenance');
+//        }
         
         return $affected_rows;
     }
