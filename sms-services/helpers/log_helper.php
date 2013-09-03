@@ -53,7 +53,7 @@ function write_log($level = 'error', $message, $item = 'service')
     $log_items = $CI->config->item('log_debug_items');
     $level = strtoupper($level);
     
-    if ( ! ($level == 'ERROR' || $log_items[$item])) //Alway log error
+    if ($level != 'ERROR' && ($log_items && array_key_exists($item, $log_items) && $log_items[$item])) //Alway log error
     {
         return FALSE;
     }    
@@ -79,7 +79,7 @@ function write_log($level = 'error', $message, $item = 'service')
     {        
         $CI->benchmark->counter = (isset($CI->benchmark->counter))?$CI->benchmark->counter+1:0;
         $CI->benchmark->mark($CI->benchmark->counter);
-        $time = $CI->benchmark->elapsed_time('0',$CI->benchmark->counter);
+        $time = $CI->benchmark->elapsed_time(($CI->benchmark->counter == 0)?'0':$CI->benchmark->counter-1,$CI->benchmark->counter);
         $message = "$time - $message";            
     }                   
     

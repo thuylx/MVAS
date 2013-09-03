@@ -14,8 +14,7 @@ $config['log_print_log_level']  = FALSE;
 |--------------------------------------------------------------------------
 | Debug items
 |--------------------------------------------------------------------------
-| Apply for all log as debug level, only log of belows items will be recorded
-| by function write_log
+| Apply for all log as debug level, set to FALSE if you would like to eliminate any log items.
 */
 $config['log_debug_items']['core']      = TRUE;
 $config['log_debug_items']['mo']        = TRUE;

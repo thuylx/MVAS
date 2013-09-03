@@ -3,7 +3,8 @@ class Service extends MX_Controller
 {        
     public function __construct()
     {
-        parent::__construct();                          
+        parent::__construct();
+        $this->benchmark->mark('begin');
                 
         //For development;
         if (ENVIRONMENT == 'development' || ENVIRONMENT == 'testing')
@@ -68,7 +69,7 @@ class Service extends MX_Controller
         $inserted_id = $this->MO_model->is_inserted($this->ORI_MO);
         if ($inserted_id !== FALSE)
         {
-            write_log('error', '[WARNING] Duplicated MO: '.$inserted_id.','.date('Y-m-d H:i:s',$this->ORI_MO->time).','.$this->ORI_MO->smsc_id.','.$this->ORI_MO->msisdn.','.$this->ORI_MO->short_code.','.$this->ORI_MO->content);
+            write_log('error', 'WARNING: Discarded a duplicated MO, ID = '.$inserted_id);
             return FALSE;
         }        
         
@@ -111,7 +112,7 @@ class Service extends MX_Controller
         //Insert MO into database        
         $this->MO_model->insert($this->ORI_MO);
         
-        define('MOID', $this->ORI_MO->id);
+        define('SID', $this->ORI_MO->id); //For logging
         
         //Black list and White list processing             
         if ($this->_process_black_white_list($this->scp->category,$this->ORI_MO->msisdn))
@@ -145,6 +146,25 @@ class Service extends MX_Controller
                               
         write_log("debug",highlight_info("<strong>Total processed MO: ".$this->Statistic_model->total_processed_mo."</strong>"),'service');
         write_log("debug",highlight_info("<strong>Total sent MT: ".$this->Statistic_model->total_sent_mt."</strong>"),'service');            
+        
+        
+        //Warning if process too many MO, MT
+        if ($this->Statistic_model->total_processed_mo > $this->config->item('mo_processing_threshold'))
+        {
+            write_log('error','WARNING: Number of processed MO ('.$this->Statistic_model->total_processed_mo.') exceeds the threshold of '.$this->config->item('mo_processing_threshold').' messages per session');
+        }
+        if ($this->Statistic_model->total_sent_mt > $this->config->item('mt_sending_threshold'))
+        {
+            write_log('error','WARNING: Number of MT sent ('.$this->Statistic_model->total_sent_mt.') exceeds the threshold of '.$this->config->item('mt_sending_threshold').' messages per session');
+        }
+        
+        //Warning if execution time is to long
+        $this->benchmark->mark('end');
+        $exec_time = $this->benchmark->elapsed_time('begin','end');
+        if ($exec_time > $this->config->item('exec_time_threshold'))
+        {
+            write_log('error','WARNING: Service execution time ('.$exec_time.') exceeds the threshold of '.$this->config->item('exec_time_threshold').' second(s)');
+        }
     }
     
     private function _process_black_white_list($service_category,$msisdn)
@@ -308,7 +328,7 @@ class Service extends MX_Controller
      * */
     public function re_run($mo_id)
     {                
-        define('MOID', "RERUN$mo_id"); //for logging
+        define('SID', $mo_id); //for logging
         
         //Configure to print out re-run result
         $this->config->set_item('log_print_out',TRUE);        
@@ -372,18 +392,22 @@ class Service extends MX_Controller
     {        
         $this->scp->trigger = 'timer';
         
-        define('MOID', 'TIMER'); // For logging
+        define('SID', 'TIMER'); // For logging
         
         if ($this->scp->load_service('timer'))
         {                        
             $this->scp->run_service();
         }
         //Provision content and update queue
-        $this->scp->provision();          
-    }
-    
-    public function _output($output) {
-        write_log('info','Total elapsed time: '.$this->benchmark->elapsed_time());        
+        $this->scp->provision();
+        
+        //Warning if execution time is to long
+        $this->benchmark->mark('end');
+        $exec_time = $this->benchmark->elapsed_time('begin','end');
+        if ($exec_time > $this->config->item('exec_time_threshold'))
+        {
+            write_log('error','WARNING: Timer execution time ('.$exec_time.') exceeds threshold of '.$this->config->item('exec_time_threshold').' second(s)');
+        }        
     }
  
 }

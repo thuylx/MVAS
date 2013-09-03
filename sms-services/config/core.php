@@ -175,5 +175,9 @@ $config['PPG'] = array(
     'password'  => 'Sec@6789ret'
 );
 
+$config['exec_time_threshold'] = 5; //in second
+$config['mo_processing_threshold'] = 100; //sessions which process more than this threshold will be logged
+$config['mt_sending_threshold'] = 100; //sessions which process more than this threshold will be logged
+
 /* End of file core.php */
 /* Location: ./sms-services/config/core.php */

@@ -117,7 +117,7 @@ class Mt_box
             
             if (strlen($New_MT->content) > config_item('sms_len_threshold'))
             {
-                write_log('error','<strong>[WARNING] Length of added MT is '.strlen($New_MT->content).', exceed threshold of '.config_item('sms_len_threshold').'. Service Action id = '.$New_MT->service_action_id.'</strong>','mt');
+                write_log('error','<strong>WARNING: Length of added MT is '.strlen($New_MT->content).', exceed threshold of '.config_item('sms_len_threshold').'. Service Action id = '.$New_MT->service_action_id.'</strong>','mt');
             }            
         }
         else

@@ -49,15 +49,15 @@ class MY_Log extends CI_Log {
 		{
 			return FALSE;
 		}
-                if (defined("MOID"))
+                if (defined("SID"))
                 {
-                    $moid = MOID.' - ';
+                    $sid = SID;
                 }
                 else
                 {
-                    $moid = '';
+                    $sid = 'SMSAPP';
                 }
-		$message .= $level.' '.(($level == 'INFO') ? ' -' : '-').' '. $moid .date($this->_date_fmt). ' --> '.$msg."\n";
+		$message .= $level.' '.(($level == 'INFO') ? ' -' : '-').' '. $sid . ' - ' .date($this->_date_fmt). ' --> '.$msg."\n";
 
 		flock($fp, LOCK_EX);
 		fwrite($fp, $message);

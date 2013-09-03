@@ -4,6 +4,9 @@ class Maintenance extends MX_Controller
     function __construct()
     {
         parent::__construct();
+        $this->benchmark->mark('begin');
+        
+        define('SID', 'MAINTENANCE'); //For logging
         
         //For development;
         //if (ENVIRONMENT == 'development' || ENVIRONMENT == 'testing')
@@ -86,6 +89,14 @@ class Maintenance extends MX_Controller
         $this->archive('mo');
         $this->archive('mt');
         $this->archive('customer');
+        
+        //Warning if execution time is to long
+        $this->benchmark->mark('end');
+        $exec_time = $this->benchmark->elapsed_time('begin','end');
+        if ($exec_time > $this->config->item('exec_time_threshold'))
+        {
+            write_log('error','WARNING: DB Maintenance time ('.$exec_time.') exceeds threshold of '.$this->config->item('exec_time_threshold').' second(s)','maintenance');
+        }        
     }
 }
 

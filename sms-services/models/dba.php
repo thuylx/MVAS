@@ -22,7 +22,7 @@ class Dba extends CI_Model
         
         $affected_rows = $this->db_mgw->affected_rows();
         
-        write_log('error',"WARNING: Purged $affected_rows kannel DLR",'maintenance');
+        write_log('error',"WARNING: Purged $affected_rows kannel DLR before $date 00:00:00",'maintenance');
         write_log('debug',$sql,'maintenance');
         
 //        if ($affected_rows)
@@ -41,14 +41,14 @@ class Dba extends CI_Model
      * */
     public function purge_kannel_sent_sms($date)
     {        
-        $date = strtotime($date);
+        $time = strtotime($date);
 //        $sql = "DELETE FROM `kannel`.`sent_sms` WHERE DATE(FROM_UNIXTIME(`time`)) < ".$this->db_mgw->escape($date).";";
-        $sql = "DELETE FROM `kannel`.`sent_sms` WHERE `time` < ".$this->db_mgw->escape($date).";";
+        $sql = "DELETE FROM `kannel`.`sent_sms` WHERE `time` < ".$this->db_mgw->escape($time).";";
         $this->db_mgw->query($sql);
         
         $affected_rows = $this->db_mgw->affected_rows();
         
-        write_log('error',"WARNING: Purged $affected_rows Kannel sent SMS.",'maintenance');
+        write_log('error',"WARNING: Purged $affected_rows Kannel SMS sent before $date 00:00:00",'maintenance');
         write_log('debug',$sql,'maintenance');
         
 //        if ($affected_rows)
@@ -68,12 +68,12 @@ class Dba extends CI_Model
     public function purge_mo($date)
     {
 //        $sql = "DELETE FROM ".$this->db->protect_identifiers('mo',TRUE)." WHERE DATE(FROM_UNIXTIME(".$this->db->protect_identifiers('time').")) < ".$this->db->escape($date).";";
-        $date = strtotime($date);
-        $sql = "DELETE FROM ".$this->db->protect_identifiers('mo',TRUE)." WHERE `last_provision_time` < ".$this->db->escape($date).";";
+        $time = strtotime($date);
+        $sql = "DELETE FROM ".$this->db->protect_identifiers('mo',TRUE)." WHERE `last_provision_time` < ".$this->db->escape($time).";";
         $this->db->query($sql);
         $affected_rows = $this->db->affected_rows();
         
-        write_log('error',"WARNING: Purged $affected_rows MO",'maintenance');
+        write_log('error',"WARNING: Purged $affected_rows MO provisioned before $date 00:00:00",'maintenance');
         write_log('debug',$sql,'maintenance');
         
 //        if ($affected_rows)
@@ -95,7 +95,7 @@ class Dba extends CI_Model
         $table = $this->db->protect_identifiers('mt',TRUE);
 //        $table2 = $this->db->protect_identifiers('dlr',TRUE);
         
-        $date = strtotime($date);
+        $time = strtotime($date);
         
         //Purge dlr
 //        $sql = "DELETE FROM $table2".
@@ -116,11 +116,11 @@ class Dba extends CI_Model
         
         //Purge MT                
 //        $sql = "DELETE FROM $table WHERE DATE(FROM_UNIXTIME(".$this->db->protect_identifiers('time').")) < ".$this->db->escape($date).";";
-        $sql = "DELETE FROM $table WHERE `time` < ".$this->db->escape($date).";";
+        $sql = "DELETE FROM $table WHERE `time` < ".$this->db->escape($time).";";
         $this->db->query($sql);
         $affected_rows = $this->db_mgw->affected_rows();
         
-        write_log('error',"WARNING: Purged $affected_rows MT",'maintenance');
+        write_log('error',"WARNING: Purged $affected_rows MT received before $date 00:00:00",'maintenance');
         write_log('debug',$sql,'maintenance');
 //        if ($affected_rows)
 //        {        
@@ -143,7 +143,7 @@ class Dba extends CI_Model
         $this->db->query($sql);
         $affected_rows = $this->db_mgw->affected_rows();
         
-        write_log('error',"WARNING: Purged $affected_rows MT",'maintenance');
+        write_log('error',"WARNING: Purged $affected_rows MT which does not associate with any MO",'maintenance');
         write_log('debug',$sql,'maintenance');
         
 //        if ($affected_rows)
@@ -176,15 +176,15 @@ class Dba extends CI_Model
      * */
     public function purge_customer($date)
     {
-        $date = strtotime($date);
+        $time = strtotime($date);
         $table = $this->db->protect_identifiers('customer',TRUE);
-        $sql =  "DELETE FROM `mvas`.$table WHERE `mvas`.$table.`last_mo_time`< ".$this->db->escape($date)." ".
-                " AND `mvas`.$table.`last_mt_time`< ".$this->db->escape($date);
+        $sql =  "DELETE FROM `mvas`.$table WHERE `mvas`.$table.`last_mo_time`< ".$this->db->escape($time)." ".
+                " AND `mvas`.$table.`last_mt_time`< ".$this->db->escape($time);
 //        $sql = "DELETE FROM ".$this->db->protect_identifiers('customer',TRUE)." WHERE ".$this->db->protect_identifiers('last_mo_time')." < ".$this->db->escape($date).";";
         $this->db->query($sql);
         $affected_rows = $this->db->affected_rows();
         
-        write_log('error',"WARNING: Purged $affected_rows Customers",'maintenance');
+        write_log('error',"WARNING: Purged $affected_rows Customers have no transaction from $date 00:00:00",'maintenance');
         write_log('debug',$sql,'maintenance');
         
 //        if ($affected_rows)
@@ -330,12 +330,12 @@ class Dba extends CI_Model
      * */
     public function purge_lottery_cache($date)
     {
-        $date = strtotime($date);
-        $sql = "DELETE FROM ".$this->db->protect_identifiers('lottery_cache',TRUE)." WHERE ".$this->db->protect_identifiers('time')." < ".$this->db->escape($date).";";
+        $time = strtotime($date);
+        $sql = "DELETE FROM ".$this->db->protect_identifiers('lottery_cache',TRUE)." WHERE ".$this->db->protect_identifiers('time')." < ".$this->db->escape($time).";";
         $this->db->query($sql);
         $affected_rows = $this->db->affected_rows();
         
-        write_log('error',"WARNING: Purged $affected_rows Lottery Cached Items",'maintenance');
+        write_log('error',"WARNING: Purged $affected_rows Lottery Cached Items before $date 00:00:00",'maintenance');
         write_log('debug', $sql, 'maintenance');
         
 //        if ($affected_rows)
