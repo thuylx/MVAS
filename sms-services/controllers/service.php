@@ -4,6 +4,8 @@ class Service extends MX_Controller
     public function __construct()
     {
         parent::__construct();
+        
+        set_log_source('SMSAPP');
         $this->benchmark->mark('begin');
                 
         //For development;
@@ -12,7 +14,7 @@ class Service extends MX_Controller
             $this->output->enable_profiler(TRUE);
             write('<a href="http://appsrv.mvas.vn/'.ENVIRONMENT.'/sms-services/injector" target="_parent">SMS Injection Form</a>'); 
             write('<a href="http://appsrv.mvas.vn/'.ENVIRONMENT.'/sms-services/injector/lottery" target="_parent">Lottery Result Injection Form (KQXS)</a>');                        
-            write('<hr>');            
+            write('<hr>');
         }
         
         ini_set('memory_limit', '-1'); // Increase allowed memory size since the list might be huge
@@ -27,7 +29,7 @@ class Service extends MX_Controller
         $this->load->library('Mt_box',NULL,'MT_Box');
         $this->load->library('Mo_box',NULL,'MO_Box');        
         $this->load->library('Event_handler',NULL,'Event');
-        $this->load->library('Environment_params',NULL,'Evr'); //For environment parameters
+        $this->load->library('Environment_params',NULL,'Evr'); //For environmental parameters
         $this->load->library('Scp'); //Service control point
         $this->load->library('Parser');                
         
@@ -48,7 +50,7 @@ class Service extends MX_Controller
         
         //Load helpers
         $this->load->helper('database');       
-        $this->load->helper('text');                    
+        $this->load->helper('text');     
     }           
             
     /**
@@ -69,7 +71,7 @@ class Service extends MX_Controller
         $inserted_id = $this->MO_model->is_inserted($this->ORI_MO);
         if ($inserted_id !== FALSE)
         {
-            write_log('error', 'WARNING: Discarded a duplicated MO, ID = '.$inserted_id);
+            write_log('debug', 'WARNING: Discarded a duplicated MO, ID = '.$inserted_id);
             return FALSE;
         }        
         
@@ -111,8 +113,7 @@ class Service extends MX_Controller
         
         //Insert MO into database        
         $this->MO_model->insert($this->ORI_MO);
-        
-        define('SID', $this->ORI_MO->id); //For logging
+        set_log_source('EXEC '.$this->ORI_MO->id);
         
         //Black list and White list processing             
         if ($this->_process_black_white_list($this->scp->category,$this->ORI_MO->msisdn))
@@ -328,7 +329,7 @@ class Service extends MX_Controller
      * */
     public function re_run($mo_id)
     {                
-        define('SID', $mo_id); //for logging
+        set_log_source('RERUN '.$mo_id);
         
         //Configure to print out re-run result
         $this->config->set_item('log_print_out',TRUE);        
@@ -337,7 +338,7 @@ class Service extends MX_Controller
         $MO = $this->MO_model->get_mo($mo_id);
         if ( ! $MO)
         {
-            write("<strong>The MO message is not found to re-run. ID = $mo_id</strong>");
+            write_log('debug',"<strong>WARNING: The MO message is not found to re-run. ID = $mo_id</strong>");
             return;
         }
         $this->ORI_MO->load($MO);
@@ -390,10 +391,9 @@ class Service extends MX_Controller
     
     public function timer()
     {        
+        set_log_source('TIMER');
+        
         $this->scp->trigger = 'timer';
-        
-        define('SID', 'TIMER'); // For logging
-        
         if ($this->scp->load_service('timer'))
         {                        
             $this->scp->run_service();

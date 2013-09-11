@@ -6,7 +6,7 @@ class Maintenance extends MX_Controller
         parent::__construct();
         $this->benchmark->mark('begin');
         
-        define('SID', 'MAINTENANCE'); //For logging
+        set_log_source('MAINTENANCE');
         
         //For development;
         //if (ENVIRONMENT == 'development' || ENVIRONMENT == 'testing')

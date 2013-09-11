@@ -16,9 +16,9 @@ $config['log_print_log_level']  = FALSE;
 |--------------------------------------------------------------------------
 | Apply for all log as debug level, set to FALSE if you would like to eliminate any log items.
 */
-$config['log_debug_items']['core']      = TRUE;
-$config['log_debug_items']['mo']        = TRUE;
-$config['log_debug_items']['mt']        = TRUE;
+$config['log_debug_items']['core']      = FALSE;
+$config['log_debug_items']['mo']        = FALSE;
+$config['log_debug_items']['mt']        = FALSE;
 $config['log_debug_items']['service']   = TRUE;
 $config['log_debug_items']['maintenance']   = TRUE;
 

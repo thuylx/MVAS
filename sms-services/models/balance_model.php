@@ -14,10 +14,17 @@ class Balance_model extends CI_Model
      * */
     public function get_list($balance = NULL,$short_code=NULL,$keyword=NULL,$argument=NULL,$last_provision_date=NULL,$smsc_id=NULL)
     {
-        $this->db->select('msisdn,short_code,smsc_id,last_mo_id')->from('customer_balance');
+        $this->db->select('msisdn,short_code,smsc_id')
+                ->select_sum('balance')
+                ->select_max('id', 'last_mo_id')
+                ->select_max('last_provision_time')
+                ->from('mo')
+                ->where('balance IS NOT NULL')
+                ->where('cancelled',0)
+                ->group_by('msisdn,short_code,keyword,argument');
         if (isset($balance))
         {
-            $this->db->where('balance',$balance);
+            $this->db->having('balance',$balance);
         }
         if (isset($short_code))
         {
@@ -55,7 +62,7 @@ class Balance_model extends CI_Model
         }
         if (isset($last_provision_date))
         {
-            $this->db->where('DATE(FROM_UNIXTIME(`last_provision_time`))',$this->db->escape($last_provision_date),FALSE);
+            $this->db->having('DATE(FROM_UNIXTIME(`last_provision_time`)) = '.  $this->db->escape($last_provision_date));
         }
         
         if (isset($smsc_id))

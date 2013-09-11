@@ -7,7 +7,7 @@ class MY_Log extends CI_Log {
 	 */
 	public function __construct()
 	{
-            parent::__construct();
+            parent::__construct();            
 	}
 
 	// --------------------------------------------------------------------
@@ -24,7 +24,7 @@ class MY_Log extends CI_Log {
 	 */
 	public function write_log($level = 'error', $msg, $php_error = FALSE)
 	{
-
+            
 		if ($this->_enabled === FALSE)
 		{
 			return FALSE;
@@ -49,15 +49,15 @@ class MY_Log extends CI_Log {
 		{
 			return FALSE;
 		}
-                if (defined("SID"))
+                if (array_key_exists('log_source', $GLOBALS))
                 {
-                    $sid = SID;
+                    $sid = $GLOBALS['log_source'];
                 }
                 else
                 {
-                    $sid = 'SMSAPP';
+                    $sid = 'SYSTEM';
                 }
-		$message .= $level.' '.(($level == 'INFO') ? ' -' : '-').' '. $sid . ' - ' .date($this->_date_fmt). ' --> '.$msg."\n";
+		$message .= $level.' '.(($level == 'INFO') ? ' -' : '-').' '.date($this->_date_fmt). ' - '. $sid . ' --> ' .$msg."\n";
 
 		flock($fp, LOCK_EX);
 		fwrite($fp, $message);

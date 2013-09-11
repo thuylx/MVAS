@@ -1,6 +1,14 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 /**
+ * Set log source to add to begin of every log message when call write_log function
+ * @param String $string
+ */
+function set_log_source($string){
+    $GLOBALS['log_source'] = $string;
+}
+
+/**
  * Echo a message to screen when running in a specific environment but not write to log file
  * @param $message: message to be echo
  * @param $level: String. Add this level at the begining of printed out string
@@ -48,13 +56,13 @@ function write($message, $level = NULL)
  * */
 function write_log($level = 'error', $message, $item = 'service')
 {                  
-    $CI =& get_instance();
+    $CI =& get_instance();    
     
     $log_items = $CI->config->item('log_debug_items');
     $level = strtoupper($level);
     
-    if ($level != 'ERROR' && ($log_items && array_key_exists($item, $log_items) && $log_items[$item])) //Alway log error
-    {
+    if ($level != 'ERROR' && ($log_items && array_key_exists($item, $log_items) && ($log_items[$item] === FALSE))) //Alway log error
+    {        
         return FALSE;
     }    
 
@@ -83,16 +91,13 @@ function write_log($level = 'error', $message, $item = 'service')
         $message = "$time - $message";            
     }                   
     
-//    if (isset($CI->ORI_MO))
-//    {
-//        $log = "[MVAS] [".$CI->ORI_MO->id."]".strip_tags($message); 
-//    }
-//    else
-//    {
-        $log = strip_tags($message); 
-//    }
-    
-    log_message($level, $log);                        
+    $log = strip_tags($message); 
+        
+    //Store $CI->log_source to GLOBALS since we can not refer to CI in MY_Log->write_log
+    //$GLOBALS['log_source'] = (isset($CI->Evr->SID))?$CI->Evr->SID:NULL;
+    log_message($level, $log);
+    //$GLOBALS['log_source'] = NULL; //clean up
+            
     if ($CI->config->item('log_print_out'))
     {
         write($message,$level);

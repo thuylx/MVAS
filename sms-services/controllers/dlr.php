@@ -4,8 +4,9 @@ class Dlr extends MX_Controller
 {    
 	public function __construct()
 	{
-        parent::__construct();      
-                
+            parent::__construct();      
+            $this->load->library('Environment_params',NULL,'Evr'); //For environmental parameters
+        
             //For development;
             $this->output->enable_profiler(ENVIRONMENT == 'development');
             //Load config
@@ -15,7 +16,7 @@ class Dlr extends MX_Controller
 	
 	public function process($status, $status_time, $mt_id)
 	{
-            define('MOID', "DLR$mt_id"); //for logging
+            set_log_source("DLR $mt_id");
             if ($this->config->item('max_resend_time')>0) //Try to resend MT
             {
                 $this->load->model("Mt_model","MT_model");
