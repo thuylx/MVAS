@@ -72,6 +72,8 @@ class Service extends MX_Controller
         if ($inserted_id !== FALSE)
         {
             write_log('debug', 'WARNING: Discarded a duplicated MO, ID = '.$inserted_id);
+            $this->ORI_MO->status = 'error_mo_duplicated';
+            echo $this->ORI_MO->status;
             return FALSE;
         }        
         
@@ -130,7 +132,7 @@ class Service extends MX_Controller
             $this->_service_system();
         }
         
-        echo "OK"; //Use to see if everything get well.
+        echo $this->ORI_MO->status; //Use to see if everything get well.
         
         if ($this->config->item('real_time_statistic'))
         {
@@ -236,7 +238,7 @@ class Service extends MX_Controller
             }
             else
             {                                
-                $this->ORI_MO->status = 'executed';
+//                $this->ORI_MO->status = 'executed';
                 $this->scp->run_service();                            
             }            
         }

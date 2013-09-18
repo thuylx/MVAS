@@ -5,7 +5,7 @@ class Result_model extends CI_Model
     public $region;
     public $code;
     public $area_code;
-	public $date;
+    public $date;
     public $result = array();
     
     public function __construct()
@@ -230,6 +230,14 @@ class Result_model extends CI_Model
      * */     
     public function load($code = NULL, $date = NULL)
     {
+        $today = date("Y-m-d");
+        $date = ($date == '')?$today:$date;
+        
+        if ($this->date == $date)
+        {
+            return TRUE; //Loaded already
+        }
+        
         //Reset object data
         $this->reset();
         
@@ -239,8 +247,7 @@ class Result_model extends CI_Model
             write_log('debug',"Result model function load: code is not specified");
             return FALSE;
         }
-        $today = date("Y-m-d",time());
-        $date = ($date == '')?$today:$date;        
+        
         write_log('debug',"Result Model loading lottery result with code = $code on $date");
         
         //=======================================================================================
@@ -304,7 +311,7 @@ class Result_model extends CI_Model
         $this->db->select('value,prize_id')
                  ->from('lottery_result')
                  ->where_in('prize_id',$prizes)
-                 ->order_by('order','ASC');
+                 ->order_by('`order`','ASC');
         $sub_query = $this->db->get();
         
         //Fetch lottery result to corresponding prize

@@ -23,6 +23,7 @@ class Mo
                                                 'content',
                                                 'short_code',
                                                 'time',
+                                                'actual_time',
                                                 'smsc_id',
                                                 'status',
                                                 'balance',
@@ -259,6 +260,8 @@ class Mo
 		$good	= array('&#36;',	'&#40;',	'&#41;',	'&#40;',	'&#41;',	"\'",  "\\\\");        
         $array['content'] = str_replace($good, $bad, $array['content']);
         $array['short_code'] = substr($array['short_code'],strlen($array['short_code'])-4); 
+        
+        $array['actual_time'] = date('Y-m-d H:i:s');
         
         $this->load($array);
         

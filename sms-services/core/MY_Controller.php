@@ -900,6 +900,7 @@ class MY_Controller extends MX_Controller
      * @param   object $MO: MO object to be processed
      * @param   interger $root_service_action_id is id of service action from which scenario start
      * @param   boolean $exclude_root_service_action
+     * @return string Last MO status
      * */
     public function process_mo(&$MO = NULL, $root_service_action_id = NULL, $exclude_root_service_action = FALSE)
     {
@@ -934,18 +935,22 @@ class MY_Controller extends MX_Controller
         //PROCESS MO        
         $this->process($root_service_action_id, $exclude_root_service_action);
 
+        $return = $this->MO->status;
         //Cache processed MO to update later
         if ($this->MO->is_changed())
         {
             $this->MO->save();
         }
         else
-        {
+        {           
             write_log('debug',"Nothing have been changed with MO id =".$this->MO->id.".",'core');
+            $this->MO->reset();
         }
 
         //Recover default MT information after processing MO
         $this->MT_Box->set_default_MT($MT_temp);
+        
+        return $return;
     }    
     
     /**
@@ -1169,8 +1174,18 @@ class MY_Controller extends MX_Controller
      
     public function __event_new_mo()
     {
-        $this->MO = clone $this->ORI_MO;        
-        $this->process_mo($this->MO,$this->scp->root_service_action);        
+        write_log('debug',highlight_info('Clone original message ORI_MO to running message MO'),'core');
+        $this->MO = clone $this->ORI_MO;
+        
+        if ($this->MO->status == 'executable'){
+            write_log('debug',highlight_info('Set default status for executable message'),'core');
+            $this->MO->status = 'executed';            
+        }
+                
+        $status = $this->process_mo($this->MO,$this->scp->root_service_action);
+        
+        write_log('debug',highlight_info('Update status of original message ORI_MO after processing'),'core');
+        $this->ORI_MO->status = $status;
     }
         
     /**

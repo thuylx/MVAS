@@ -76,6 +76,9 @@ class Maintenance extends MX_Controller
     
     public function process()
     {
+        //Extend long query time to avoid logging too much.
+        $this->db->query('SET long_query_time = 60;');
+        
 //        # PURGE kannel database
         $this->flush_kannel();
 
@@ -89,6 +92,8 @@ class Maintenance extends MX_Controller
         $this->archive('mo');
         $this->archive('mt');
         $this->archive('customer');
+        
+        $this->db->query('SET long_query_time = 5;');
         
         //Warning if execution time is to long
         $this->benchmark->mark('end');

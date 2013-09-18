@@ -139,30 +139,44 @@ class Lottery_model extends CI_Model
      * */
     public function get_last_result($lottery_code,$prize_code = NULL)
     {                
-        write_log('debug',"Get last result of $lottery_code, prize $prize_code");
-        if ( ! is_null($prize_code))
-        {
-            return $this->get_cache($lottery_code,$prize_code);
-        }
+        write_log('debug',"Get last result of $lottery_code, prize $prize_code");                
         
+        $prize_codes = (is_null($prize_code))?array('1','2','3','4','5','6','7','8','DB'):array($prize_code);
+        
+        //Try cache 
         $this->db->select('code,content,time')
                  ->from('lottery_cache')
                  ->where('lottery_code',$lottery_code)
-                 ->where_in('code',array('1','2','3','4','5','6','7','8','DB'))
+                 ->where_in('code',$prize_codes)
                  ->order_by('DATE(FROM_UNIXTIME(`time`))','DESC')
                  ->order_by('code','DESC')
                  ->limit(1);
         $query = $this->db->get();
         
-        if ($query->num_rows == 0)
+        if ($query->num_rows != 0) return $query->row();        
+        
+        //No cached found, load from database
+        if ($prize_code == 'DB' || is_null($prize_code))
         {
-            write_log('error',"No prize cached");
-            return FALSE;
+            write_log('debug',"No prize cached");                    
+            $date = $this->get_open_date($lottery_code);
+            $result = $this->_get_result_no_cache($lottery_code, $date);
+            if ($result)
+            {
+                //Write cache the last result
+                $this->cache($lottery_code, 'DB', $result);
+                
+                $result = array(
+                    'code' => 'DB',
+                    'content' => $result,
+                    'time' => strtotime($date.' 18:25:00')
+                );
+                $result = (object)$result;               
+            }            
+            return $result;            
         }
-        
-        $row = $query->row();
-        
-        return $row;        
+
+        return FALSE;                
     }        
     
     /**
@@ -176,20 +190,16 @@ class Lottery_model extends CI_Model
                  ->from('lottery_cache')
                  ->where('lottery_code',$lottery_code)
                  ->where_in('code',array('1','2','3','4','5','6','7','8','DB'))
-                 ->where('time >=',strtotime(date('Y-m-d'). " 00:00:00"))                 
-                 ->order_by('time','DESC')                
+                 ->where('time >=',strtotime(date('Y-m-d'). " 00:00:00"))             
                  ->order_by('code','DESC')
                  ->limit(1);
         $query = $this->db->get();
         
-        if ($query->num_rows == 0)
-        {            
-            return FALSE;
-        }
-        
-        $row = $query->row();
-        
-        return $row;                
+        if ($query->num_rows != 0) return $query->row();
+
+        //No cache found, see database
+        $result = $this->_get_result_no_cache($lottery_code,date('Y-m-d'));
+        return $result;       
     }
     
     /**
@@ -199,10 +209,15 @@ class Lottery_model extends CI_Model
     public function get_today_result($lottery_code, $prize = 'DB')
     {
         write_log('debug',"Get today result of $lottery_code, prize $prize");
-        $result = $this->get_last_result($lottery_code,$prize);        
-        if ($result && date('Y-m-d',$result->time) == date('Y-m-d'))
+        
+        //Try cache first
+        $result = $this->get_cache($lottery_code, $prize);
+        if ($result && date('Y-m-d',$result->time) == date('Y-m-d')) return $result;
+        
+        //Try to search in database when no cache found
+        if ($prize == 'DB')
         {
-            return $result;
+            return $this->_get_result_no_cache($lottery_code,date('Y-m-d'));
         }
         return FALSE;
     }
@@ -225,8 +240,29 @@ class Lottery_model extends CI_Model
     {
         write_log('debug',"Get last loto result of $lottery_code");
         $temp =  $this->get_cache($lottery_code,'loto');
-        unset($temp->code);
-        return $temp;
+        
+        if ($temp)
+        {
+            unset($temp->code);
+            return $temp;
+        }
+        
+        $date = $this->get_open_date($lottery_code);
+        $result = $this->_get_loto_no_cache($lottery_code, $date);
+        if ($result)
+        {
+            //Write cache the last loto result
+            $this->cache($lottery_code, 'loto', $result);
+
+            $result = array(
+                'content' => $result,
+                'time' => strtotime($date.' 18:25:00')
+            );
+            
+            $result = (object)$result;
+        }
+        
+        return $result;                    
     }
     
     /**
@@ -236,12 +272,15 @@ class Lottery_model extends CI_Model
     public function get_today_loto($lottery_code)
     {
         write_log('debug',"Get today loto result of $lottery_code");
-        $temp = $this->get_last_loto($lottery_code);
+        
+        $temp = $this->get_cache($lottery_code,'loto');
         if (date('Y-m-d',$temp->time) == date('Y-m-d'))
         {
             return $temp;
         }
-        return FALSE;
+        
+        //from database
+        return $this->_get_loto_no_cache($lottery_code,date('Y-m-d'));
     }
     /**
      * make lottery statistic
@@ -702,7 +741,29 @@ class Lottery_model extends CI_Model
         
         return $codes;
     }
+    
+    /**
+     * Get result string from database (skip reading cache)
+     * @param string $lottery_code
+     * @param string $date
+     * @return string
+     */
+    public function _get_result_no_cache($lottery_code, $date)
+    {
+        $this->load->model('Result_model');         
+        $this->Result_model->load($lottery_code,$date);
 
+        return $this->Result_model->generate_result_string();         
+    }
+    
+    public function _get_loto_no_cache($lottery_code, $date)
+    {
+        $this->load->model('Result_model');                 
+        $this->Result_model->load($lottery_code,$date);    
+        
+        return $this->Result_model->generate_loto_string();        
+    }
+    
     /**
      * Get DB lottery result for an open date     
      * @param   $lottery_code
@@ -713,24 +774,14 @@ class Lottery_model extends CI_Model
     {        
         $date = (is_null($date))?date("Y-m-d"):$date;
         write_log('debug',"Get full result of $lottery_code on $date");
-                
+        
         if ($date == date("Y-m-d"))
         {
-            $result = $this->get_today_result($lottery_code,"DB");
-            if ( ! $result)
-            {
-                return FALSE;                
-            }
-            return $result->content;
+            return $this->get_today_result($lottery_code);
         }
         
-        if ( ! isset($this->Result_model))
-        {
-            $this->load->model('Result_model');            
-        } 
-        $this->Result_model->load($lottery_code,$date);
-        
-        return $this->Result_model->generate_result_string();    
+        //Previous day
+        return $this->_get_result_no_cache($lottery_code, $date);
     }
     
     /**
@@ -748,13 +799,8 @@ class Lottery_model extends CI_Model
         {
             return $this->get_today_loto($lottery_code);
         }
-        if ( ! isset($this->Result_model))
-        {
-            $this->load->model('Result_model');            
-        }        
-        $this->Result_model->load($lottery_code,$date);    
-        
-        return $this->Result_model->generate_loto_string();    
+
+        return $this->_get_loto_no_cache($lottery_code,$date);
     }
            
     
@@ -784,17 +830,24 @@ class Lottery_model extends CI_Model
      * */
     private function _statistic_last_occur($lottery_code = 'MB',$prize_DB_only = FALSE)
     {
-        $this->db->select('result, date, num_days');
+        $this->db->select('RIGHT(`value`,2) AS `result`, MAX(`lottery_date`) AS `date`, (TO_DAYS(CAST(NOW() AS DATE)) - TO_DAYS(MAX(`lottery_date`))) AS `num_days`',FALSE)
+                ->from('lottery_result')
+                ->join('lottery_prize','lottery_result.prize_id = lottery_prize.id')
+                ->where('lottery_code',$lottery_code)
+                ->group_by('RIGHT(`value`,2)')
+                ->order_by('MAX(`lottery_date`)');
+//        $this->db->select('result, date, num_days');
         if ($prize_DB_only)
         {
-            $this->db->from('lottery_last_occur_db');
+            $this->db->where('prize_code','DB');
+//            $this->db->from('lottery_last_occur_db');
         }
-        else
-        {
-            $this->db->from('lottery_last_occur');
-        }
+//        else
+//        {            
+//            $this->db->from('lottery_last_occur');
+//        }
         
-        $this->db->where('lottery_code',$lottery_code);
+//        $this->db->where('lottery_code',$lottery_code);
             
         $query = $this->db->get();
         return $query->result();
@@ -913,10 +966,16 @@ class Lottery_model extends CI_Model
         }
         else        
         {            
-            $this->db->select('loto')
-                     ->from('lottery_loto_result')
-                     ->where('lottery_code',$lottery_code)
-                     ->where('lottery_date',$date);
+            $this->db->select('`lottery_date` AS `lottery_date`, RIGHT(`value`,2) AS `loto`, COUNT(0) AS `count`',FALSE)
+                    ->from('lottery_prize')
+                    ->join('lottery_result','lottery_prize.id = lottery_result.prize_id')
+                    ->group_by('`lottery_date`,RIGHT(`value`,2)')
+                    ->where('lottery_code',$lottery_code)
+                    ->where('lottery_date',$date);
+//            $this->db->select('loto')
+//                     ->from('lottery_loto_result')
+//                     ->where('lottery_code',$lottery_code)
+//                     ->where('lottery_date',$date);
 
             $query = $this->db->get();
             $return = array();
@@ -997,10 +1056,14 @@ class Lottery_model extends CI_Model
      * */
     public function get_last_occur_db_first($lottery_code = 'MB')
     {
-        $this->db->select('first,date')
-                 ->from('lottery_last_occur_db_first')
-                 ->where('lottery_code',$lottery_code)
-                 ->order_by('date');                 
+        $this->db->select('SUBSTR(`value`,(LENGTH(`value`) - 1),1) AS `first`, MAX(`lottery_date`) AS `date`',FALSE)
+                ->from('lottery_prize')
+                ->join('lottery_result','lottery_prize.id = lottery_result.prize_id')
+                ->where('lottery_code',$lottery_code)
+                ->where('prize_code','DB')
+                ->group_by('lottery_code')
+                ->group_by('first')                
+                ->order_by('date');                 
         $query = $this->db->get();
         
         return $query->result_array();
@@ -1014,10 +1077,14 @@ class Lottery_model extends CI_Model
      * */
     public function get_last_occur_db_last($lottery_code = 'MB')
     {
-        $this->db->select('last,date')
-                 ->from('lottery_last_occur_db_last')
-                 ->where('lottery_code',$lottery_code)
-                 ->order_by('date');
+        $this->db->select('RIGHT(`value`,1) AS `last`, MAX(`lottery_date`) AS `date`',FALSE)
+                ->from('lottery_prize')
+                ->join('lottery_result','lottery_prize.id = lottery_result.prize_id')
+                ->where('lottery_code',$lottery_code)
+                ->where('prize_code','DB')
+                ->group_by('lottery_code')
+                ->group_by('last')                
+                ->order_by('date');        
         $query = $this->db->get();
         
         return $query->result_array();

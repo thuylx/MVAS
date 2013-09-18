@@ -17,7 +17,7 @@ $config['log_print_log_level']  = TRUE;
 | Apply for all log as debug level, only log of belows items will be recorded
 | by function write_log
 */
-$config['log_debug_items']['core']      = FALSE;
+$config['log_debug_items']['core']      = TRUE;
 $config['log_debug_items']['mo']        = TRUE;
 $config['log_debug_items']['mt']        = TRUE;
 $config['log_debug_items']['service']   = TRUE;
