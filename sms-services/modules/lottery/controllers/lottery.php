@@ -381,10 +381,10 @@ class Lottery extends MY_Controller
         $prize = $this->Result_model->get_max_prize();              
         $evr['prize'] = $prize;
         
-        $updated = $this->Lottery_model->is_cached($this->Result_model->code,$prize,$this->Result_model->date);                
+        $updated = $this->Lottery_model->is_updated($this->Result_model->code,$prize,$this->Result_model->date);                
         if ($updated)
         {
-            write_log('debug',"[WARNING] Lottery Prize updated already, discarded MO id=".$this->MO->id);
+            write_log('error',"[WARNING] Lottery Prize updated already, discarded MO id=".$this->MO->id);
             $this->MO->status = 'discarded';
             //$evr['updated'] = FALSE;
             //$this->Evr->lottery = $evr;

@@ -106,7 +106,7 @@ class Injector extends MX_Controller
 
         // Redirect to lottery update link                    
         $this->load->helper('url');     
-        redirect($this->config->item('base_url')."/service/exec/short_code/".urlencode($_POST['short_code']).'/msisdn/'.urlencode($_POST['msisdn']).'/time/'.$time.'/smsc_id/'.urlencode($_POST['smsc_id']).'/content/'.str_replace("%0A","+",urlencode($content)));                          
+        redirect($this->config->item('base_url')."/service/exec/source/injector/short_code/".urlencode($_POST['short_code']).'/msisdn/'.urlencode($_POST['msisdn']).'/time/'.$time.'/smsc_id/'.urlencode($_POST['smsc_id']).'/content/'.str_replace("%0A","+",urlencode($content)));                          
     }                     
     
     function reload()

@@ -423,7 +423,7 @@ class Lottery_dp extends MY_Controller
         $updated = $this->Lottery_model->is_cached($this->Result_model->code,$prize,$this->Result_model->date);                
         if ($updated)
         {
-            write_log('debug',"[WARNING] Lottery Prize updated already, discarded MO id=".$this->MO->id);
+            write_log('error',"[WARNING] Lottery Prize updated already, discarded MO id=".$this->MO->id);
             $this->MO->status = 'discarded';
             //$evr['updated'] = FALSE;
             //$this->Evr->lottery = $evr;

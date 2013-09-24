@@ -17,7 +17,7 @@ date_default_timezone_set('Asia/Ho_Chi_Minh');
 | path to your installation.
 |
 */
-$config['base_url']	= 'http://appsrv.mvas.vn/'.ENVIRONMENT.'/sms-services';
+$config['base_url']	= 'http://'.ENVIRONMENT.'.mvas.vn/'.ENVIRONMENT.'/sms-services';
 //$config['base_url']	= 'http://appsrv.mvas.vn/development/sms-services';
 
 /*

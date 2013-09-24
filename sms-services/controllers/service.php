@@ -64,7 +64,12 @@ class Service extends MX_Controller
     public function exec()
     {
         //Parse URI for infoming MO
-        $this->ORI_MO->parse_uri();      
+        $this->ORI_MO->parse_uri();
+        //For injector view
+//        if ($this->ORI_MO->source == 'injector')
+//        {
+//            $this->config->set_item('log_print_out',TRUE);
+//        }
         
         //Check if this MO exist already (caused by an error of Telco somehow)
         write_log('debug','Checking if ORI_MO is duplicated somehow...');
@@ -340,7 +345,7 @@ class Service extends MX_Controller
         $MO = $this->MO_model->get_mo($mo_id);
         if ( ! $MO)
         {
-            write_log('debug',"<strong>WARNING: The MO message is not found to re-run. ID = $mo_id</strong>");
+            write_log('error',"<strong>WARNING: The MO message is not found to re-run. ID = $mo_id</strong>");
             return;
         }
         $this->ORI_MO->load($MO);
@@ -394,6 +399,8 @@ class Service extends MX_Controller
     public function timer()
     {        
         set_log_source('TIMER');
+//        $this->output->enable_profiler(TRUE);
+        $this->config->set_item('log_print_out',TRUE);        
         
         $this->scp->trigger = 'timer';
         if ($this->scp->load_service('timer'))

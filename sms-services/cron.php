@@ -138,9 +138,10 @@
 
 
 # Log the results of this run
-    error_log("### ".date('Y-m-d H:i:s')." cron.php $cmdline\n", 3, CRON_LOG);
+    error_log('\n<hr><br>\n', 3, CRON_LOG);
+    error_log("### ".date('Y-m-d H:i:s')." cron.php $cmdline ###\n", 3, CRON_LOG);
     error_log($output, 3, CRON_LOG);
-    error_log("\n### \n\n", 3, CRON_LOG);
+    error_log("\n<br>\n\n", 3, CRON_LOG);
 
 
 echo "\n\n";

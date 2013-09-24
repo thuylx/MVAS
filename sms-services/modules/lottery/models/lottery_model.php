@@ -28,10 +28,10 @@ class Lottery_model extends CI_Model
     /**
      * Update cache item
      * */
-    public function cache($lottery_code,$code,$text)
+    public function cache($lottery_code,$code,$text,$time = NULL)
     {        
         write_log("debug","Cache $lottery_code, $code");
-        $time = time();
+        $time = (is_null($time))?time():$time;
         
         $fields['lottery_code'] = $this->db->protect_identifiers('lottery_code');
         $fields['code']         = $this->db->protect_identifiers('code');
@@ -160,16 +160,17 @@ class Lottery_model extends CI_Model
         {
             write_log('debug',"No prize cached");                    
             $date = $this->get_open_date($lottery_code);
+            $time = strtotime($date.' 00:00:00');
             $result = $this->_get_result_no_cache($lottery_code, $date);
             if ($result)
             {
                 //Write cache the last result
-                $this->cache($lottery_code, 'DB', $result);
+                $this->cache($lottery_code, 'DB', $result,$time);
                 
                 $result = array(
                     'code' => 'DB',
                     'content' => $result,
-                    'time' => strtotime($date.' 18:25:00')
+                    'time' => $time
                 );
                 $result = (object)$result;               
             }            
@@ -230,7 +231,22 @@ class Lottery_model extends CI_Model
         $count = $this->db->count_all_results('lottery_cache');
                                       
         return ($count>0);
-    }    
+    }   
+    
+    public function is_updated($lottery_code,$prize,$date)
+    {
+        //Check cache first
+        if ($this->is_cached($lottery_code, $prize, $date)) return TRUE;
+        
+        //Not cached
+        if ($prize == 'DB')
+        {
+            $last_date = $this->get_open_date($lottery_code);
+            return ($last_date >= $date);
+        }
+        
+        return FALSE;
+    }
     
     /**
      * Get last loto result
@@ -248,15 +264,16 @@ class Lottery_model extends CI_Model
         }
         
         $date = $this->get_open_date($lottery_code);
+        $time = strtotime($date.' 18:25:00');
         $result = $this->_get_loto_no_cache($lottery_code, $date);
         if ($result)
         {
             //Write cache the last loto result
-            $this->cache($lottery_code, 'loto', $result);
+            $this->cache($lottery_code, 'loto', $result, $time);
 
             $result = array(
                 'content' => $result,
-                'time' => strtotime($date.' 18:25:00')
+                'time' => $time
             );
             
             $result = (object)$result;

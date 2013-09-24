@@ -112,7 +112,7 @@ class MGW
         if ( ! isset($MT->type) || $MT->type == '')
         {
             //$return = '0:Warning - Message type is not defined, set to 1 as a text message.';
-            write_log('error','Warning - Message type is not defined, set to 1 as a text message.','mo');
+            write_log('error','WARNING: Message type is not defined, set to 1 as a text message.','mo');
             $MT->type = 1;
         }
         else
